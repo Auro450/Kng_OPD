@@ -1,0 +1,127 @@
+[
+  {
+    "id": "8b097f1c-0846-44d9-954c-a8f7285bbb36",
+    "name": "Dr. Narayan Ch Kundu ",
+    "specialty": "MBBS",
+    "description": "Wednesday, friday",
+    "experience": "23",
+    "imageurl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBmxD5QtlBvuaxjE9RyFgYHeEPJFGVX4i18ppQ6CNbIvROAey7gi6vMWqdJEO-sLTn_L1DMGV5R_DJkzd4wFKqAeCcwZJwwGKw_XeY1B2cRdfRhlxSl6KsIuuPyCmh_d86z-LMnbEztd5bKd2ai0b0Yxlkh7l8rmuYuGsq-kpce_16cOAUzYokO8y6XuQklukfPFkURThwZuKMYBmini0-C3ksQkpKsTnLe2ydERUnDA3H8FoYCH13NAmG0NfoCeOqzCWArUvicIoAJ",
+    "createdAt": "2026-06-27T16:04:34.922Z"
+  },
+  {
+    "name": "Dr. Sukriti Mukherjee",
+    "specialty": "Consultant Neuropsychiatrist • MBBS, DNB Medicine • Expert in neuropsychiatry and behavioral sciences. Dedicated to treating complex mental health conditions with a focus on holistic recovery.",
+    "imageurl": "https://lh3.googleusercontent.com/aida-public/AB6AXuAHjrfKI_BfnJF8-sKGNtDjyb6XJXlZ_Se39LOKuHoXpnGztBa1NpzGcArdBXCOdsRc4XYqrGjfmbin_JcDZ4Sln9Nrq3EmnE24F_XvYskQ7VXIn3G_j3pFh5j1W9i3egDEQH104R-5egdJz7vSvi514FpcfIcf3C27_9mj_19xBAEZgwoiixsIgQnhC5Q-CxvGUPAI5ga8AXN2dB9Yf8f7x5txkP-iVG7QNXIp8_OYfhiXxYaytAVpIdu4k7rHfN96edm1BOpcws5n",
+    "experience": "15+ Years",
+    "description": "2nd & 4th Wed.",
+    "id": 1782574875255
+  },
+  {
+    "name": "Dr. Tanmay Barai",
+    "specialty": "MBBS, MD (Paed), DM Nephrology • Specialist in Pediatric Medicine and Nephrology. Expert care for children with kidney-related conditions and general pediatric health.",
+    "imageurl": "https://lh3.googleusercontent.com/aida-public/AB6AXuBmxD5QtlBvuaxjE9RyFgYHeEPJFGVX4i18ppQ6CNbIvROAey7gi6vMWqdJEO-sLTn_L1DMGV5R_DJkzd4wFKqAeCcwZJwwGKw_XeY1B2cRdfRhlxSl6KsIuuPyCmh_d86z-LMnbEztd5bKd2ai0b0Yxlkh7l8rmuYuGsq-kpce_16cOAUzYokO8y6XuQklukfPFkURThwZuKMYBmini0-C3ksQkpKsTnLe2ydERUnDA3H8FoYCH13NAmG0NfoCeOqzCWArUvicIoAJ",
+    "experience": "12+ Years",
+    "description": "2nd & 4th Wed.",
+    "id": 1782574875256
+  },
+  {
+    "name": "Dr. Alapan Mukherjee",
+    "specialty": "MBBS, MS (G & O); Gynaecologist • Specialist Gynaecologist & Obstetrics Surgeon. Providing comprehensive women's health services, from prenatal care to advanced surgical procedures.",
+    "imageurl": "/doctors/doc_1782583742077.jpg",
+    "experience": "10+ Years",
+    "description": "Tue, Thu, Sat, Sun.",
+    "id": 1782574875257
+  },
+  {
+    "name": "Dr. Shubham Maity",
+    "specialty": "B.A.M.S, M.D. (Ayu); Ayurvedic Consultant • Expert in Ayurvedic medicine and holistic healing. Specializing in lifestyle disorders and chronic disease management.",
+    "imageurl": "https://lh3.googleusercontent.com/aida-public/AB6AXuA5om-11dG68acn8h25-Rk5_4W_o4TGL0KRHuhwqzOpUoNj8mQj4D0aJ8zAus6elc4D4klDvMFtl_HH_2xnxSAUlVgv4qI5cNdOyM8ThgU0TI8iWm2rDXBypmX0CTHDYKwBLlYajHwDt0pXJYuNRebvBhFCwdBTxi8_dY22N3Gx43VmzlrAPRYePO6ICfg8KPYFnszCMfxBIhDD4ikyYdzcFBsOtAokWAW5KYHnFSd4t7ltzcb-UEY2RaNk7JLhTjWzT89eNvPmclP6",
+    "experience": "8+ Years",
+    "description": "Thursday.",
+    "id": 1782574875258
+  },
+  {
+    "name": "Dr. Debajyoti Ghosh",
+    "specialty": "Consultant Cardiologist • Expert in non-invasive cardiology, hypertension management, and preventative heart care for all age groups.",
+    "imageurl": "/doctors/doc_debajyoti_1782419362683.png",
+    "experience": "14+ Years",
+    "description": "",
+    "id": 1782574875259
+  },
+  {
+    "name": "Dr. Anjan Mondal",
+    "specialty": "General Medicine Specialist • Specializing in internal medicine, infectious diseases, and chronic condition management with personalized care plans.",
+    "imageurl": "/doctors/doc_anjan_1782419375045.png",
+    "experience": "11+ Years",
+    "description": "",
+    "id": 1782574875260
+  },
+  {
+    "name": "Dr. Suman Kalyan Sen",
+    "specialty": "Orthopaedic Surgeon • Expert in joint replacement, sports injuries, and trauma surgery using advanced minimally invasive techniques.",
+    "imageurl": "/doctors/doc_suman_1782419387097.png",
+    "experience": "13+ Years",
+    "description": "",
+    "id": 1782574875261
+  },
+  {
+    "name": "Dr. Joydeep Biswas",
+    "specialty": "Consultant Neurology • M.B.B.S (Kol), DNB Medicine, DNB Neurology • Associated with Rubi Hospital, Kolkata. Reg. No: 64578 (WBMC)",
+    "imageurl": "/doctors/doc_joydeep_1782419397516.png",
+    "experience": "9+ Years",
+    "description": "",
+    "id": 1782574875262
+  },
+  {
+    "name": "Dr. Samiran Sinha",
+    "specialty": "Ophthalmology Specialist • Providing expert care for eye conditions, including cataract surgery, glaucoma management, and vision correction.",
+    "imageurl": "/doctors/doc_samiran_1782419408300.png",
+    "experience": "16+ Years",
+    "description": "",
+    "id": 1782574875263
+  },
+  {
+    "name": "Dr. Apoorva Anand Mukherjee",
+    "specialty": "Dermatologist & Cosmetologist • Specializing in skin, hair, and nail disorders, as well as advanced aesthetic treatments and laser therapy.",
+    "imageurl": "/doctors/doc_apoorva_1782419421595.png",
+    "experience": "7+ Years",
+    "description": "",
+    "id": 1782574875264
+  },
+  {
+    "name": "Dr. Riya Mondal",
+    "specialty": "ENT Specialist • Expert care for ear, nose, and throat conditions, specializing in sinus issues and pediatric ENT care.",
+    "imageurl": "/doctors/doc_riya_1782419432271.png",
+    "experience": "6+ Years",
+    "description": "",
+    "id": 1782574875265
+  },
+  {
+    "name": "Dr. Saheli Biswas",
+    "specialty": "General Physician • M.B.B.S. (W.B.U.H.S.) • Associated with Sadar Hospital. Reg. No: 86067",
+    "imageurl": "/doctors/doc_saheli_1782419445079.png",
+    "description": "",
+    "id": 1782574875266
+  },
+  {
+    "name": "Dr. Bakul Sarkar",
+    "specialty": "New Born and Child Specialist • MBBS, MD (Paediatric Medicine), PGPN PRO (Boston) • Associated with Krishnanagar Sadar District Hospital; Consultant at Manorama Hospital, Ranaghat; Ex-N.R.S. Medical College & Hospital. Reg. No: 78603 (WBMC)",
+    "imageurl": "/doctors/doc_bakul_1782419455598.png",
+    "description": "",
+    "id": 1782574875267
+  },
+  {
+    "name": "Dr. Robin S Choudhury",
+    "specialty": "Neurosurgeon / Spine Specialist • M.B.B.S (Kol), M.S. (General Surgery), M.Ch. (Neuro), M.A.M.C New Delhi • Associated with Tata Memorial Hospital. Reg. No: 13-47812",
+    "imageurl": "/doctors/doc_robin_1782419466385.png",
+    "description": "",
+    "id": 1782574875268
+  },
+  {
+    "name": "Dr. Prabin Kumar",
+    "specialty": "Consultant Trauma, Joint Replacement & Arthroscopic Surgeon • M.B.B.S (Kol), M.S. Ortho • Associated with Kolkata Medical College & Hospital. Reg. No: 79314 (WBMC)",
+    "imageurl": "/doctors/doc_prabin_1782419480554.png",
+    "description": "",
+    "id": 1782574875269
+  }
+]

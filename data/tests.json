@@ -1,0 +1,587 @@
+[
+  {
+    "id": "d7cde1ea-72b4-4cc3-a285-dc0253882513",
+    "code": "T0130",
+    "name": "TSH (Ultra sensitive) CMIA Serum"
+  },
+  {
+    "id": "029375eb-2a44-4393-b385-1c436af51859",
+    "code": "C0017",
+    "name": "Calcium Total Serum"
+  },
+  {
+    "id": "13e178ed-8fb4-4fcf-bc50-851104837c57",
+    "code": "B0038",
+    "name": "Bilirubin Total, Direct, Indirect, Serum"
+  },
+  {
+    "id": "16607bcf-3581-4b5a-b86d-145dff7ca5fc",
+    "code": "C0106",
+    "name": "Cholesterol Total Serum"
+  },
+  {
+    "id": "a1d93471-bcae-4fdd-b861-99d646b55475",
+    "code": "C0169",
+    "name": "Creatinine"
+  },
+  {
+    "id": "ceb1e10d-f61f-4615-976c-3136938ebbbc",
+    "code": "R0029",
+    "name": "Routine Examination Stool"
+  },
+  {
+    "id": "adb03181-d3bf-4993-ac4a-8321f2b7323e",
+    "code": "R0041",
+    "name": "Urine Routine"
+  },
+  {
+    "id": "7d658aef-4e14-4928-886d-c3ac324536e6",
+    "code": "S0018",
+    "name": "SGOT"
+  },
+  {
+    "id": "f6dc214d-1415-472b-94a2-0c13bf3c56ba",
+    "code": "S0019",
+    "name": "SGPT"
+  },
+  {
+    "id": "54b63d51-ebad-4f24-87fe-27efdea166eb",
+    "code": "T0106",
+    "name": "Triglycerides Serum"
+  },
+  {
+    "id": "62d79af6-22e5-4ecb-991f-85392a92ac36",
+    "code": "U0003",
+    "name": "Urea"
+  },
+  {
+    "id": "4f47ed71-baa8-4ce4-bbfe-7406826d41cd",
+    "code": "U0007",
+    "name": "Uric Acid"
+  },
+  {
+    "id": "9e31b844-1a6b-41bc-bd77-9719cae3bf84",
+    "code": "S0032",
+    "name": "Sodium"
+  },
+  {
+    "id": "b6d4c65a-5cbc-447e-a69d-9b2d43cfbc30",
+    "code": "P0078",
+    "name": "Potassium SE Serum"
+  },
+  {
+    "id": "8aaf3324-76dc-47f5-9f04-e8d5adfe98b1",
+    "code": "B0046",
+    "name": "Blood Group"
+  },
+  {
+    "id": "5edfd71b-2e1b-4711-9d5e-de5cfc18ad1d",
+    "code": "P0032",
+    "name": "PBS (Peripheral Smear Examination) EDTA Blood"
+  },
+  {
+    "id": "3bd097bb-b41e-4186-8e26-cf6b6b92b034",
+    "code": "A0125",
+    "name": "Albumin Serum"
+  },
+  {
+    "id": "8154e13e-eab4-4347-b2b3-0ed4e7fcfbd0",
+    "code": "P0053",
+    "name": "Phosphorus Serum"
+  },
+  {
+    "id": "1226a61f-f219-40ab-8773-7407a31cafac",
+    "code": "V0003",
+    "name": "VDRL RPR Serum"
+  },
+  {
+    "id": "3e6157d6-182e-4d48-be09-f07f96ecb048",
+    "code": "W0011",
+    "name": "Widal Test for Typhoid Serum"
+  },
+  {
+    "id": "baeb0618-bdbb-4439-be6f-781af80c3be9",
+    "code": "H0295",
+    "name": "Histology Extra Slide Set"
+  },
+  {
+    "id": "aad9b267-8bba-4577-91d3-bbd27e6db51b",
+    "code": "L0017",
+    "name": "LDL Cholesterol Direct Serum"
+  },
+  {
+    "id": "c764383f-ac7d-4468-9cf2-7e99d788d6a0",
+    "code": "R0001",
+    "name": "RA Test Rheumatoid Arthritis Serum"
+  },
+  {
+    "id": "16c0f0d2-9364-4e4e-9ac9-d9bf49bed0e4",
+    "code": "H0057",
+    "name": "HDL Cholesterol Direct Serum"
+  },
+  {
+    "id": "728b5e69-a27b-491d-aefc-4ec465b07821",
+    "code": "C0165",
+    "name": "CPK Total Serum"
+  },
+  {
+    "id": "8c1c0cb8-31a5-4e64-baa3-e2761d35e8bf",
+    "code": "H0018",
+    "name": "HbA1c Blood"
+  },
+  {
+    "id": "0ebdaca8-f7ce-4d8e-90c3-61342e480d2d",
+    "code": "L0012",
+    "name": "LDH Lactate Dehydrogenase Serum"
+  },
+  {
+    "id": "4603c461-cb47-4f73-bf11-cdac6b8b6c51",
+    "code": "P0110",
+    "name": "Prothrombin Time (PT)"
+  },
+  {
+    "id": "3dfc3a8c-9a38-45bd-9106-7a3b8da3633e",
+    "code": "G0020",
+    "name": "Gamma GT (CGTP) Serum"
+  },
+  {
+    "id": "3aa3ff51-a8d0-4a58-93b5-4c16f23565c1",
+    "code": "L0068",
+    "name": "Lipase Serum"
+  },
+  {
+    "id": "e9a3a050-9d37-4061-8579-0ac54c04fab8",
+    "code": "P0112",
+    "name": "PSA Total Prostate Specific Antigen Serum"
+  },
+  {
+    "id": "dbc6c3d1-64bb-4b09-825d-afd34f336b97",
+    "code": "T0042",
+    "name": "Testosterone Total Serum"
+  },
+  {
+    "id": "eb77bef4-bc27-4790-a7a6-fecb5c705c4e",
+    "code": "L0080",
+    "name": "Liver Function Test Mini"
+  },
+  {
+    "id": "56999bda-5bb0-4dae-86fb-d28dae3616ba",
+    "code": "A0471",
+    "name": "APTT"
+  },
+  {
+    "id": "1ee7de00-33de-4c9b-a307-28643ac372fa",
+    "code": "A0127",
+    "name": "Albumin Creatinine Ratio Urine"
+  },
+  {
+    "id": "0223946f-70a1-44ba-9211-048fff42f5eb",
+    "code": "R0012",
+    "name": "Renal (Kidney) Function Tests Mini (Urea Rt, Creatinine, Uric)"
+  },
+  {
+    "id": "63ee66b6-8b18-46b3-8c9a-d90544a993ab",
+    "code": "F0018",
+    "name": "Ferritin Serum"
+  },
+  {
+    "id": "5f55d934-524c-41f3-bb29-6c80b5bdfb1e",
+    "code": "I0275",
+    "name": "Insulin (Fasting) CMIA Serum"
+  },
+  {
+    "id": "fd508c5a-57e2-447e-9d76-e9b5db2f9f9b",
+    "code": "I0275_PP",
+    "name": "Insulin Post Prandial Serum by ECLIA"
+  },
+  {
+    "id": "f19d046b-6a2f-461e-9916-9983e95c906c",
+    "code": "A0031",
+    "name": "ADA (Adenosine Deaminase) Serum"
+  },
+  {
+    "id": "d5d7f925-ce4b-41f4-88d1-b042cdc6aaf8",
+    "code": "C0124",
+    "name": "CPK MB Fraction"
+  },
+  {
+    "id": "d675d6cb-da92-47a3-90fe-ef4abdc4c6cc",
+    "code": "H0192",
+    "name": "Histopathological Examination Unspecified Specimen Small"
+  },
+  {
+    "id": "20519471-8f58-4c95-9042-329e030a0c76",
+    "code": "V0015",
+    "name": "Vitamin D Total 25 Hydroxy Plasma Serum"
+  },
+  {
+    "id": "4fb091a7-873e-46f5-8853-a63a6cb5967b",
+    "code": "C0197",
+    "name": "Culture & Sensitivity Aerobic Bacteria Stool"
+  },
+  {
+    "id": "a8e0c4ab-447c-45bc-b465-15cef1114f36",
+    "code": "C0047",
+    "name": "CCP Antibody Serum"
+  },
+  {
+    "id": "a3e68a90-917e-4f65-88d2-7956b7bae099",
+    "code": "P0012",
+    "name": "PAP Smear by Liquid Based Cytology (LBC)"
+  },
+  {
+    "id": "d00304f3-d8f7-4f65-8cdf-7eb210a26574",
+    "code": "H0191",
+    "name": "Histopathological Examination Unspecified Specimen Medium"
+  },
+  {
+    "id": "a85be1d2-a92e-44ad-9ccd-3a12f116e9ce",
+    "code": "H0793",
+    "name": "H3 Viral Marker Profile (HIV, HbsAg, HCV)"
+  },
+  {
+    "id": "65d55d3b-4ac8-472d-bb6e-f74724c504ea",
+    "code": "D0039",
+    "name": "Maternal Screen (Dual Marker Test) First Trimester"
+  },
+  {
+    "id": "4775cede-fc3e-478f-bb81-fcea21252142",
+    "code": "P0088",
+    "name": "Procalcitonin Serum"
+  },
+  {
+    "id": "5d6a64ff-0b63-4e67-b540-7cb38cd8aa75",
+    "code": "D0041",
+    "name": "Maternal Screen (Triple Marker) 2nd Trimester Serum"
+  },
+  {
+    "id": "a6d187b6-9c1f-4560-bd2f-dff6237569ce",
+    "code": "T0077",
+    "name": "TORCH 10 by CLIA Serum"
+  },
+  {
+    "id": "548f0eca-af42-4985-9040-ff5dd7e46d96",
+    "code": "K0012",
+    "name": "Karyotyping by G Banding"
+  },
+  {
+    "id": "79f0bba8-d05d-4eab-84c3-ff37ce395951",
+    "code": "A0001",
+    "name": "Abnormal Haemoglobin Studies Blood"
+  },
+  {
+    "id": "c7cebcfa-aeaa-451c-aa4a-a423ee3f81c7",
+    "code": "A0647",
+    "name": "AFB DNA Detection by Realtime PCR Other Samples"
+  },
+  {
+    "id": "0aa2b105-802a-452b-944d-15537ae697ef",
+    "code": "A0084",
+    "name": "AFB DNA Detection by Realtime PCR Sputum/BAL"
+  },
+  {
+    "id": "e28260f2-2119-4369-b38b-8ba38c54a0c9",
+    "code": "A0119",
+    "name": "AFP Alpha Fetoprotein Serum"
+  },
+  {
+    "id": "a2dc721a-bf45-4c03-bfbe-83c00c74198a",
+    "code": "A0417",
+    "name": "AMH Mullerian Inhibitor Substance Serum"
+  },
+  {
+    "id": "ec731d5e-3528-4759-9e1e-7593902abacc",
+    "code": "A0432",
+    "name": "Amylase Serum"
+  },
+  {
+    "id": "fd08ea7f-abcf-41c3-b15b-7ef2dd9f5919",
+    "code": "A0437",
+    "name": "ANA Anti Nuclear Antibody by FA Serum"
+  },
+  {
+    "id": "824862dc-ddb1-4c18-adc0-c5697de70a79",
+    "code": "A0485",
+    "name": "ASO Titre Serum"
+  },
+  {
+    "id": "b7d00fd5-b9e3-415f-bcfa-deb65c7ff0bf",
+    "code": "C0005",
+    "name": "CA 12.5 Serum"
+  },
+  {
+    "id": "1e5accab-8dc2-488a-8b5c-573f3c440776",
+    "code": "C0007",
+    "name": "CA 19.9 Serum"
+  },
+  {
+    "id": "8633e009-1e93-490f-a8f4-26cbb9fe2e10",
+    "code": "C0038",
+    "name": "Cardiolipin Antibody IgG Serum"
+  },
+  {
+    "id": "ca94c9ed-4da2-4400-8038-a28d74cf3a4e",
+    "code": "C0039",
+    "name": "Cardiolipin Antibody IgM Serum"
+  },
+  {
+    "id": "e21f31da-7f6f-48df-b46f-633ce891d247",
+    "code": "C0078",
+    "name": "CEA Carcinoembryonic Antigen Serum"
+  },
+  {
+    "id": "e095f56c-4247-49e1-941f-48c560618783",
+    "code": "C0151",
+    "name": "Coombs Direct (DAT) Test"
+  },
+  {
+    "id": "79aed947-6bc2-4c23-8337-fcbe55b26d47",
+    "code": "C0152",
+    "name": "Coombs Indirect (IAT) Test"
+  },
+  {
+    "id": "7fcecfef-6228-447e-987a-b3eb5066270d",
+    "code": "C0157",
+    "name": "Cortisol Serum (8AM)"
+  },
+  {
+    "id": "4783577e-692d-4709-81bf-8b73f47c25bf",
+    "code": "C0157_4PM",
+    "name": "Cortisol Serum (4PM)"
+  },
+  {
+    "id": "48697ced-3501-4b44-9e90-7761b465743f",
+    "code": "C0170",
+    "name": "CRP C-Reactive Protein Serum"
+  },
+  {
+    "id": "46987dc0-267f-4c50-8233-6ff4727540c5",
+    "code": "C0182",
+    "name": "Culture & Sensitivity Aerobic Bacteria Blood Single Bottle"
+  },
+  {
+    "id": "8c7a06d4-3689-4c26-bb18-9e587e404673",
+    "code": "C0202",
+    "name": "Culture & Sensitivity (Automated) Aerobic Bacteria Urine"
+  },
+  {
+    "id": "e8e8ac0d-b22e-4a95-8e46-ed2018d3f799",
+    "code": "D0002",
+    "name": "D Dimer Plasma"
+  },
+  {
+    "id": "04cfcad6-a527-49c5-adda-2c12e194373f",
+    "code": "D0003",
+    "name": "Dengue Antibody IgG Serum"
+  },
+  {
+    "id": "c3f5b9ab-dfc2-42eb-a364-627363e6fe7a",
+    "code": "D0004",
+    "name": "Dengue Antibody IgM Serum"
+  },
+  {
+    "id": "7c44c33f-a033-4539-b011-ce9a9f9a9195",
+    "code": "D0005",
+    "name": "Dengue NS1 Antigen Serum"
+  },
+  {
+    "id": "cd646b53-b73d-47eb-89f4-a30a4370a0d1",
+    "code": "D0032",
+    "name": "DNA (ds) Antibody (NCX) Serum"
+  },
+  {
+    "id": "a7141031-5ab0-46ad-b15e-7cd8a9e9add4",
+    "code": "E0021",
+    "name": "Electrolytes Serum"
+  },
+  {
+    "id": "c573d95a-9e6a-4374-b073-fe82032925d5",
+    "code": "E0004",
+    "name": "Estradiol (E2) Serum"
+  },
+  {
+    "id": "920be39d-4a24-431c-b63b-2a8fb98bec2e",
+    "code": "F0046",
+    "name": "Folic Acid Serum"
+  },
+  {
+    "id": "6ea58066-547f-4d80-99b5-9601c31639cb",
+    "code": "F0058",
+    "name": "FSH Follicle Stimulating Hormone Serum"
+  },
+  {
+    "id": "26594479-c8b2-4fee-b4a4-96441b66beab",
+    "code": "H0040",
+    "name": "HBsAg Screening Serum"
+  },
+  {
+    "id": "501430d5-6109-4505-9aed-ca7af3890869",
+    "code": "H0043",
+    "name": "HCG Beta Subunit Serum"
+  },
+  {
+    "id": "50bcb678-084b-498e-9c38-43e2994eb900",
+    "code": "H0055",
+    "name": "HCV Hepatitis C Total Antibodies (Anti HCV) Serum"
+  },
+  {
+    "id": "b7097aa1-a2d4-4f19-98fa-41251da6671d",
+    "code": "H0211",
+    "name": "HIV DUO p24 Antigen & Antibody to HIV 1 & 2 Serum"
+  },
+  {
+    "id": "3c0d7695-700d-41fa-ac56-7f4318f47ce6",
+    "code": "H0250",
+    "name": "HLA B27 (Human Leucocyte Antigen B27)"
+  },
+  {
+    "id": "45e488cb-0f6e-4396-bd6b-b991107ad9d7",
+    "code": "A0398",
+    "name": "IgE Total Antibody Serum"
+  },
+  {
+    "id": "cf6fa35f-26d1-46a8-afed-1ef23251825a",
+    "code": "I0373",
+    "name": "IGRAS (Quantiferon TB Gold) 3 Tube Assay"
+  },
+  {
+    "id": "af9ea33f-978e-4f1c-b402-fc62e2d633af",
+    "code": "I0286",
+    "name": "Iron Studies Serum"
+  },
+  {
+    "id": "3011ab1a-7ade-4a26-8715-9210c03abd2f",
+    "code": "L0066",
+    "name": "LH Luteinizing Hormone CMIA Serum"
+  },
+  {
+    "id": "ef654732-15f1-48b8-8266-bc4b7c65cdf3",
+    "code": "L0071",
+    "name": "Lipid Profile Mini"
+  },
+  {
+    "id": "5d478a01-37de-4770-9662-c6d4a04f4002",
+    "code": "M0002",
+    "name": "Magnesium Serum"
+  },
+  {
+    "id": "e0f8ca51-27eb-472f-9401-48503c7699e7",
+    "code": "D0040",
+    "name": "Maternal Screen (Quadruple Test) 2nd Trimester"
+  },
+  {
+    "id": "86289f0b-b7ff-4fe7-be10-874b928b4f91",
+    "code": "M0053",
+    "name": "Microalbumin Creatinine Ratio"
+  },
+  {
+    "id": "eca20777-48c5-4aac-8138-d8b8c77d4e2e",
+    "code": "A0464",
+    "name": "Phospholipid Antibody IgG Serum"
+  },
+  {
+    "id": "8395c4fd-a1a7-4793-8a08-154db9af3a3e",
+    "code": "A0465",
+    "name": "Phospholipid Antibody IgM Serum"
+  },
+  {
+    "id": "98a4e359-86d4-4daf-9312-a8130366e3af",
+    "code": "P0089",
+    "name": "Progesterone (P4) CMIA Serum"
+  },
+  {
+    "id": "60243618-b2dd-4de2-9399-aaace83ae906",
+    "code": "P0090",
+    "name": "Prolactin Serum"
+  },
+  {
+    "id": "231d455b-9df9-40b0-9442-0a0c43e09e0d",
+    "code": "P0096",
+    "name": "Protein Electrophoresis Serum"
+  },
+  {
+    "id": "94039fb3-43bb-4136-ace3-196a5b2b5974",
+    "code": "P0114",
+    "name": "PTH Intact Molecule Parathyroid Hormone Serum/Plasma"
+  },
+  {
+    "id": "922cbaf9-bc3f-4d13-b625-79b923826640",
+    "code": "T0065",
+    "name": "Thyroid Panel 1 (T3/T4/TSH)"
+  },
+  {
+    "id": "9397796f-52ba-4f17-8f68-42dd9da4f3d1",
+    "code": "T0066",
+    "name": "Thyroid Panel 2 (FT3, FT4, TSH)"
+  },
+  {
+    "id": "ddf8604f-83fa-490e-9215-00950312581c",
+    "code": "T0068",
+    "name": "Thyroid Panel 4 Thyroscreen FT4 And TSH 3rd Gen Serum"
+  },
+  {
+    "id": "fe06e3c2-8af5-4e03-b5b7-b0e8b09af93b",
+    "code": "T0101",
+    "name": "TPO (Thyroid Peroxidase) Antibody (AMA) Microsomal Antibody"
+  },
+  {
+    "id": "db7528e5-5768-47a4-949e-1c5334030c1e",
+    "code": "T0135",
+    "name": "Typhi Dot IgM Serum"
+  },
+  {
+    "id": "d8a020fc-e8e5-406b-9f63-caa9caa0dba1",
+    "code": "V0010",
+    "name": "Vitamin B12 Cyanocobalamin Serum"
+  },
+  {
+    "id": "643ec41c-45e1-41a4-8aa6-2fc9dda0f9bf",
+    "code": "C0044",
+    "name": "CBC"
+  },
+  {
+    "id": "6c2840f1-f0b8-4ac4-8a59-0b12f8f415f9",
+    "code": "DL014",
+    "name": "CBC + ESR"
+  },
+  {
+    "id": "31693837-072b-48a2-9442-bad7b9fe0f90",
+    "code": "G0027",
+    "name": "Glucose"
+  },
+  {
+    "id": "e1c0558a-128e-4f5c-a9b1-4e76bf8078f9",
+    "code": "G0027_F",
+    "name": "Glucose PP"
+  },
+  {
+    "id": "bf645415-74ba-43c3-ac72-7c803c2b13db",
+    "code": "G0027_R",
+    "name": "Glucose RBS"
+  },
+  {
+    "id": "994e7f55-e3af-418d-b831-47d81a55e9bd",
+    "code": "H0069",
+    "name": "Haemoglobin"
+  },
+  {
+    "id": "a58b14ac-fea1-45f2-928a-dc27980d1c04",
+    "code": "M0006",
+    "name": "Malaria Parasite Detection by Smear Examination"
+  },
+  {
+    "id": "52b929fa-f5f9-4ae2-b159-28740d54fba8",
+    "code": "M0010",
+    "name": "Malaria Antigen Detection Vivax & Falciparum"
+  },
+  {
+    "id": "6fde9a46-2d10-4d2e-8ad9-c0bd433f8b4e",
+    "code": "P0063",
+    "name": "Platelet Count / Thrombocyte Count Blood"
+  },
+  {
+    "id": "611b7313-92f6-4992-8915-f621bd9426df",
+    "code": "C0204",
+    "name": "Culture and Identification Anaerobic Bacteria Blood Single Bottle"
+  }
+]
