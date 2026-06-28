@@ -7,7 +7,8 @@
     "doctor": "Dr. Samiran Sinha",
     "reason": "Doctors Appointment",
     "type": "Homepage Appointment",
-    "createdAt": "2026-06-25T21:12:51.715Z"
+    "createdAt": "2026-06-25T21:12:51.715Z",
+    "status": "Deleted"
   },
   {
     "id": "2c91c024-e5a0-4aaa-88f4-b70180d3f586",
@@ -18,7 +19,7 @@
     "reason": "Select Reason",
     "type": "Homepage Appointment",
     "createdAt": "2026-06-25T21:17:22.908Z",
-    "status": "Scheduled"
+    "status": "Deleted"
   },
   {
     "id": "5f0400df-bd05-441d-aa3f-1053854e7c55",
@@ -28,7 +29,8 @@
     "doctor": "Dr. Sukriti Mukherjee",
     "reason": "Doctors Appointment",
     "type": "Clinic Appointment",
-    "createdAt": "2026-06-26T22:09:11.585Z"
+    "createdAt": "2026-06-26T22:09:11.585Z",
+    "status": "Deleted"
   },
   {
     "id": "3ad1436d-0c69-46c7-94a7-38c7137d73bd",
@@ -38,7 +40,8 @@
     "doctor": "Dr. Shubham Maity",
     "reason": "Doctors Appointment",
     "type": "Homepage Appointment",
-    "createdAt": "2026-06-26T22:09:45.914Z"
+    "createdAt": "2026-06-26T22:09:45.914Z",
+    "status": "Deleted"
   },
   {
     "id": "7e94693f-5673-477f-907a-dfb5a552e506",
@@ -48,7 +51,8 @@
     "doctor": "Dr. Debajyoti Ghosh",
     "reason": "Post Check-up Consultation",
     "type": "Homepage Appointment",
-    "createdAt": "2026-06-26T22:10:29.807Z"
+    "createdAt": "2026-06-26T22:10:29.807Z",
+    "status": "Deleted"
   },
   {
     "id": "3a3831c6-6277-4bba-aa5b-165dc86d0778",
@@ -58,7 +62,8 @@
     "doctor": "Dr. Shubham Maity",
     "reason": "Select Reason",
     "type": "Clinic Appointment",
-    "createdAt": "2026-06-26T22:12:36.710Z"
+    "createdAt": "2026-06-26T22:12:36.710Z",
+    "status": "Deleted"
   },
   {
     "id": "c318987f-bd59-4d10-b8b4-f974d7bc5f0d",
@@ -68,7 +73,8 @@
     "doctor": "Dr. Alapan Mukherjee",
     "reason": "Select Reason",
     "type": "Clinic Appointment",
-    "createdAt": "2026-06-26T22:13:33.807Z"
+    "createdAt": "2026-06-26T22:13:33.807Z",
+    "status": "Deleted"
   },
   {
     "id": "0f069b7e-390d-4b1f-a8f5-add6d131c0fb",
@@ -79,7 +85,7 @@
     "reason": "Select Reason",
     "type": "Homepage Appointment",
     "createdAt": "2026-06-26T22:14:21.894Z",
-    "status": "Completed"
+    "status": "Deleted"
   },
   {
     "id": "eb3225ff-be31-4036-89b7-916773c798ab",
@@ -107,7 +113,8 @@
     "doctor": "Dr. Debajyoti Ghosh",
     "reason": "Doctors Appointment",
     "type": "Clinic Appointment",
-    "createdAt": "2026-06-26T22:59:46.142Z"
+    "createdAt": "2026-06-26T22:59:46.142Z",
+    "status": "Deleted"
   },
   {
     "id": "cab8161a-d146-4975-8ce8-30a61c4e0185",
@@ -118,7 +125,7 @@
     "reason": "Doctors Appointment",
     "type": "Clinic Appointment",
     "createdAt": "2026-06-27T12:44:39.312Z",
-    "status": "Completed"
+    "status": "Deleted"
   },
   {
     "id": "56164029-6889-4a80-9407-d74e3536a5c1",
@@ -130,7 +137,8 @@
     "doctor": "Dr. Alapan Mukherjee",
     "reason": "Doctors Appointment",
     "type": "Clinic Appointment",
-    "createdAt": "2026-06-27T15:06:08.083Z"
+    "createdAt": "2026-06-27T15:06:08.083Z",
+    "status": "Deleted"
   },
   {
     "id": "c6369485-e4a4-4deb-955b-12d55742f41f",
@@ -158,7 +166,8 @@
     "doctor": "Dr. Shubham Maity",
     "reason": "Doctors Appointment",
     "type": "Clinic Appointment",
-    "createdAt": "2026-06-27T15:18:47.025Z"
+    "createdAt": "2026-06-27T15:18:47.025Z",
+    "status": "Deleted"
   },
   {
     "id": "9cd1bd95-4609-4a3e-98c0-904d0a1fe249",
@@ -175,5 +184,34 @@
     "selectedTests": "C0017: Calcium Total Serum",
     "type": "Home Collection Request",
     "createdAt": "2026-06-27T15:19:15.186Z"
+  },
+  {
+    "id": "de6629dc-4e5f-40fa-a6aa-2a4302700223",
+    "bookingNumber": "RAY-DOC-2420",
+    "name": "Aabir Das",
+    "gender": "Male",
+    "phone": "8240315692",
+    "date": "2026-06-29",
+    "doctor": "Dr. Joydeep Biswas",
+    "reason": "Doctors Appointment",
+    "type": "Clinic Appointment",
+    "createdAt": "2026-06-28T02:28:14.041Z",
+    "status": "Deleted"
+  },
+  {
+    "id": "6c864e50-f7ab-4de1-9c30-8a487237be2a",
+    "bookingNumber": "RAY-PAT-4744",
+    "name": "Aabir Das_patho",
+    "phone": "8240315692",
+    "age": "",
+    "gender": "Male",
+    "address": "151/1 Dumdum",
+    "date": "2026-06-30",
+    "timeSlot": "07:00 AM - 09:00 AM",
+    "notes": "",
+    "referralDoctor": "",
+    "selectedTests": "H0018: HbA1c Blood, C0017: Calcium Total Serum, C0106: Cholesterol Total Serum",
+    "type": "Home Collection Request",
+    "createdAt": "2026-06-28T02:30:11.071Z"
   }
 ]
