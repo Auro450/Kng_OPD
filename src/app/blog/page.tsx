@@ -18,7 +18,7 @@ export default function BlogPage() {
   useEffect(() => {
     async function fetchBlogs() {
       try {
-        const res = await fetch("/api/blog");
+        const res = await fetch("http://localhost:5000/api/blog");
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) setBlogs([...ORIGINAL_BLOGS, ...data]);
       } catch (err) {}

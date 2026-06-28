@@ -44,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("ray_medical_user", JSON.stringify(userData));
     
     // Register or update user in backend database
-    fetch("/api/users", {
+    fetch("http://localhost:5000/api/users", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

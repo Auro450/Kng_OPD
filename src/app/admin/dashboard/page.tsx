@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { formatAvailability } from "@/utils/formatAvailability";
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<"doctors" | "pathology" | "bin" | "customers" | "doctors-manage" | "tests-manage" | "gallery-manage">("doctors");
+  const [activeTab, setActiveTab] = useState<"doctors" | "pathology" | "bin" | "customers" | "doctors-manage" | "tests-manage" | "gallery-manage" | "announcements">("doctors");
   const [bookings, setBookings] = useState<any[]>([]);
   const [users, setUsers] = useState<any[]>([]);
   const [allDoctors, setAllDoctors] = useState<any[]>([]);
@@ -12,7 +13,7 @@ export default function AdminDashboardPage() {
   const [editingBookingId, setEditingBookingId] = useState<string | null>(null);
   const [editingDate, setEditingDate] = useState<string>("");
   const [editingDoctorId, setEditingDoctorId] = useState<string | null>(null);
-  const [newDoctorForm, setNewDoctorForm] = useState<{name: string, specialty: string, description: string, experience: string, image: File | null}>({ name: "", specialty: "", description: "", experience: "", image: null });
+  const [newDoctorForm, setNewDoctorForm] = useState<{name: string, specialty: string, description: string, experience: string, image: File | null, availableDays: number[], availableWeeks: number[]}>({ name: "", specialty: "", description: "", experience: "", image: null, availableDays: [], availableWeeks: [] });
   const [allTests, setAllTests] = useState<any[]>([]);
   const [editingTestId, setEditingTestId] = useState<string | null>(null);
   const [newTestForm, setNewTestForm] = useState<{name: string, code: string}>({ name: "", code: "" });
@@ -21,6 +22,8 @@ export default function AdminDashboardPage() {
   const [newGalleryForm, setNewGalleryForm] = useState<{title: string, description: string, image: File | null}>({ title: "", description: "", image: null });
   const [isUpdating, setIsUpdating] = useState(false);
 
+  const [announcements, setAnnouncements] = useState<any[]>([]);
+  const [newAnnouncementText, setNewAnnouncementText] = useState("");
   const [filters, setFilters] = useState({
     doctors: { date: "", doctor: "", search: "" },
     pathology: { date: "", search: "" },
@@ -28,7 +31,8 @@ export default function AdminDashboardPage() {
     customers: { search: "" },
     "doctors-manage": { search: "" },
     "tests-manage": { search: "" },
-    "gallery-manage": { search: "" }
+    "gallery-manage": { search: "" },
+    "announcements": { search: "" }
   });
 
   const activeFilters = filters[activeTab];
@@ -62,11 +66,42 @@ export default function AdminDashboardPage() {
     fetchDoctors();
     fetchTests();
     fetchGallery();
+    fetchAnnouncements();
   }, []);
+
+  const fetchAnnouncements = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/announcement");
+      const data = await res.json();
+      if (data.success && data.announcements) setAnnouncements(data.announcements);
+    } catch (e) {
+      console.error("Error fetching announcements", e);
+    }
+  };
+
+  const handleSetAnnouncement = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsUpdating(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/announcement", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: newAnnouncementText })
+      });
+      if (res.ok) {
+        setNewAnnouncementText("");
+        fetchAnnouncements();
+      }
+    } catch (error) {
+      console.error("Error setting announcement:", error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   const fetchGallery = async () => {
     try {
-      const res = await fetch("/api/gallery");
+      const res = await fetch("http://localhost:5000/api/gallery");
       const data = await res.json();
       if (Array.isArray(data)) setAllGallery(data);
     } catch (e) {
@@ -76,7 +111,7 @@ export default function AdminDashboardPage() {
 
   const fetchTests = async () => {
     try {
-      const res = await fetch("/api/tests");
+      const res = await fetch("http://localhost:5000/api/tests");
       const data = await res.json();
       if (Array.isArray(data)) setAllTests(data);
     } catch (e) {
@@ -86,7 +121,7 @@ export default function AdminDashboardPage() {
 
   const fetchDoctors = async () => {
     try {
-      const res = await fetch("/api/doctors");
+      const res = await fetch("http://localhost:5000/api/doctors");
       const data = await res.json();
       setAllDoctors(data);
     } catch (error) {
@@ -106,12 +141,14 @@ export default function AdminDashboardPage() {
       formData.append("specialty", newDoctorForm.specialty);
       formData.append("description", newDoctorForm.description);
       formData.append("experience", newDoctorForm.experience);
+      formData.append("availableDays", JSON.stringify(newDoctorForm.availableDays));
+      formData.append("availableWeeks", JSON.stringify(newDoctorForm.availableWeeks));
       if (newDoctorForm.image) {
         formData.append("image", newDoctorForm.image);
       }
 
       const method = editingDoctorId ? "PATCH" : "POST";
-      const res = await fetch("/api/doctors", {
+      const res = await fetch("http://localhost:5000/api/doctors", {
         method: method,
         body: formData,
       });
@@ -124,7 +161,7 @@ export default function AdminDashboardPage() {
           setAllDoctors([data.doctor, ...allDoctors]);
           alert("Doctor added successfully!");
         }
-        setNewDoctorForm({ name: "", specialty: "", description: "", experience: "", image: null });
+        setNewDoctorForm({ name: "", specialty: "", description: "", experience: "", image: null, availableDays: [], availableWeeks: [] });
         setEditingDoctorId(null);
       } else {
         alert(data.message || `Failed to ${editingDoctorId ? 'update' : 'add'} doctor`);
@@ -143,7 +180,9 @@ export default function AdminDashboardPage() {
       specialty: doc.specialty,
       description: doc.description || "",
       experience: doc.experience || "",
-      image: null
+      image: null,
+      availableDays: doc.availableDays || [],
+      availableWeeks: doc.availableWeeks || []
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -152,7 +191,7 @@ export default function AdminDashboardPage() {
     e.preventDefault();
     setIsUpdating(true);
     try {
-      const url = "/api/tests";
+      const url = "http://localhost:5000/api/tests";
       const method = editingTestId ? "PATCH" : "POST";
       const bodyData = editingTestId ? { id: editingTestId, ...newTestForm } : newTestForm;
 
@@ -181,7 +220,7 @@ export default function AdminDashboardPage() {
   const handleDeleteTest = async (id: string) => {
     if (!confirm("Are you sure you want to delete this test?")) return;
     try {
-      const res = await fetch(`/api/tests?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`http://localhost:5000/api/tests?id=${id}`, { method: "DELETE" });
       const data = await res.json();
       if (data.success) {
         fetchTests();
@@ -214,7 +253,7 @@ export default function AdminDashboardPage() {
         formData.append("id", editingGalleryId);
       }
 
-      const res = await fetch("/api/gallery", {
+      const res = await fetch("http://localhost:5000/api/gallery", {
         method: editingGalleryId ? "PATCH" : "POST",
         body: formData,
       });
@@ -241,7 +280,7 @@ export default function AdminDashboardPage() {
   const handleDeleteGallery = async (id: string) => {
     if (!confirm("Are you sure you want to delete this gallery item?")) return;
     try {
-      const res = await fetch(`/api/gallery?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`http://localhost:5000/api/gallery?id=${id}`, { method: "DELETE" });
       const data = await res.json();
       if (data.success) {
         fetchGallery();
@@ -267,7 +306,7 @@ export default function AdminDashboardPage() {
     if (!window.confirm("Are you sure you want to delete this doctor?")) return;
     setIsUpdating(true);
     try {
-      const res = await fetch(`/api/doctors?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`http://localhost:5000/api/doctors?id=${id}`, { method: "DELETE" });
       const data = await res.json();
       if (data.success) {
         setAllDoctors(allDoctors.filter((d: any) => d.id !== id));
@@ -281,7 +320,7 @@ export default function AdminDashboardPage() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch("/api/users");
+      const res = await fetch("http://localhost:5000/api/users");
       const data = await res.json();
       if (data.success) {
         setUsers(data.users);
@@ -294,7 +333,7 @@ export default function AdminDashboardPage() {
   const fetchBookings = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/admin/bookings");
+      const res = await fetch("http://localhost:5000/api/admin/bookings");
       const data = await res.json();
       if (data.success) {
         setBookings(data.bookings);
@@ -310,7 +349,7 @@ export default function AdminDashboardPage() {
     if (!editingDate) return;
     setIsUpdating(true);
     try {
-      const res = await fetch("/api/admin/bookings", {
+      const res = await fetch("http://localhost:5000/api/admin/bookings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, newDate: editingDate }),
@@ -335,7 +374,7 @@ export default function AdminDashboardPage() {
     
     setIsUpdating(true);
     try {
-      const res = await fetch(`/api/admin/bookings?id=${id}`, { method: "DELETE" });
+      const res = await fetch(`http://localhost:5000/api/admin/bookings?id=${id}`, { method: "DELETE" });
       const data = await res.json();
       if (data.success) {
         setBookings(bookings.filter(b => b.id !== id));
@@ -355,7 +394,7 @@ export default function AdminDashboardPage() {
     
     setIsUpdating(true);
     try {
-      const res = await fetch("/api/admin/bookings", {
+      const res = await fetch("http://localhost:5000/api/admin/bookings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, status: "Completed" }),
@@ -379,7 +418,7 @@ export default function AdminDashboardPage() {
     
     setIsUpdating(true);
     try {
-      const res = await fetch("/api/admin/bookings", {
+      const res = await fetch("http://localhost:5000/api/admin/bookings", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, status: "Scheduled" }),
@@ -408,7 +447,7 @@ export default function AdminDashboardPage() {
     formData.append("file", file);
 
     try {
-      const res = await fetch("/api/admin/bookings/upload", {
+      const res = await fetch("http://localhost:5000/api/admin/bookings/upload", {
         method: "POST",
         body: formData,
       });
@@ -545,6 +584,13 @@ export default function AdminDashboardPage() {
             <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${activeTab === "gallery-manage" ? "bg-white/20" : "bg-[#e8ecec]"}`}>{allGallery.length}</span>
           </button>
           <button 
+            onClick={() => handleTabChange("announcements")}
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${activeTab === "announcements" ? "bg-[#0a3f41] text-white shadow-md" : "text-[#6b8c8c] hover:bg-[#e8ecec]"}`}
+          >
+            <span className="material-symbols-outlined text-xl">campaign</span>
+            Announcements
+          </button>
+          <button 
             onClick={() => handleTabChange("bin")}
             className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${activeTab === "bin" ? "bg-red-500 text-white shadow-md" : "text-[#6b8c8c] hover:bg-red-50"}`}
           >
@@ -555,7 +601,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Filters Section */}
-        {activeTab !== "doctors-manage" && activeTab !== "tests-manage" && (
+        {activeTab !== "doctors-manage" && activeTab !== "tests-manage" && activeTab !== "announcements" && (
         <div className="flex flex-wrap gap-4 mb-6 bg-white p-4 rounded-2xl shadow-sm border border-[#0a3f41]/5 items-center">
           <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-[#6b8c8c]">filter_list</span>
@@ -647,8 +693,44 @@ export default function AdminDashboardPage() {
               <form onSubmit={handleAddDoctor} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input required placeholder="Doctor Name (e.g. Dr. John Doe)" value={newDoctorForm.name} onChange={e => setNewDoctorForm({...newDoctorForm, name: e.target.value})} className="p-3 rounded-xl bg-[#f5f7f7] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50" />
                 <input required placeholder="Specialty / Degree" value={newDoctorForm.specialty} onChange={e => setNewDoctorForm({...newDoctorForm, specialty: e.target.value})} className="p-3 rounded-xl bg-[#f5f7f7] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50" />
-                <input placeholder="Availability / Dates (e.g. Available: Thursday)" value={newDoctorForm.description} onChange={e => setNewDoctorForm({...newDoctorForm, description: e.target.value})} className="p-3 rounded-xl bg-[#f5f7f7] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50" />
                 <input placeholder="Experience (e.g. 10+ Years)" value={newDoctorForm.experience} onChange={e => setNewDoctorForm({...newDoctorForm, experience: e.target.value})} className="p-3 rounded-xl bg-[#f5f7f7] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50" />
+                <div className="md:col-span-2 bg-[#f5f7f7] p-4 rounded-xl space-y-4">
+                  <div>
+                    <label className="block text-sm font-bold text-[#0a3f41] mb-2 flex justify-between">
+                      <span>Available Days</span>
+                      <button type="button" onClick={() => setNewDoctorForm(prev => ({...prev, availableDays: prev.availableDays.length === 7 ? [] : [0, 1, 2, 3, 4, 5, 6]}))} className="text-[#5adace] hover:underline">Select All</button>
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day, idx) => (
+                        <label key={day} className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-lg border border-[#e8ecec] cursor-pointer hover:border-[#5adace] transition-colors">
+                          <input type="checkbox" checked={newDoctorForm.availableDays.includes(idx)} onChange={(e) => {
+                            const nextDays = e.target.checked ? [...newDoctorForm.availableDays, idx] : newDoctorForm.availableDays.filter(d => d !== idx);
+                            setNewDoctorForm({...newDoctorForm, availableDays: nextDays});
+                          }} className="text-[#5adace] rounded w-4 h-4 cursor-pointer" />
+                          <span className="text-sm font-medium text-[#0a3f41]">{day}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-[#0a3f41] mb-2 flex justify-between">
+                      <span>Available Weeks of Month</span>
+                      <button type="button" onClick={() => setNewDoctorForm(prev => ({...prev, availableWeeks: prev.availableWeeks.length === 5 ? [] : [1, 2, 3, 4, 5]}))} className="text-[#5adace] hover:underline">Select All</button>
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {[1, 2, 3, 4, 5].map(week => (
+                        <label key={week} className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-lg border border-[#e8ecec] cursor-pointer hover:border-[#5adace] transition-colors">
+                          <input type="checkbox" checked={newDoctorForm.availableWeeks.includes(week)} onChange={(e) => {
+                            const nextWeeks = e.target.checked ? [...newDoctorForm.availableWeeks, week] : newDoctorForm.availableWeeks.filter(w => w !== week);
+                            setNewDoctorForm({...newDoctorForm, availableWeeks: nextWeeks});
+                          }} className="text-[#5adace] rounded w-4 h-4 cursor-pointer" />
+                          <span className="text-sm font-medium text-[#0a3f41]">Week {week}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <p className="text-xs text-[#6b8c8c] mt-2 font-medium">Leave options unselected if the doctor is available any day or week.</p>
+                  </div>
+                </div>
                 <div className="md:col-span-2">
                   <label className="text-xs font-bold text-[#6b8c8c] uppercase tracking-widest ml-1 mb-2 block">Upload Doctor Photo</label>
                   <div className="flex items-center gap-4">
@@ -700,7 +782,7 @@ export default function AdminDashboardPage() {
                         <tr key={doc.id} className="border-b border-[#e8ecec] hover:bg-[#f5f7f7]/50 transition-colors">
                           <td className="p-5 font-bold text-[#0a3f41]">{doc.name}</td>
                           <td className="p-5 text-[#6b8c8c] text-sm">{doc.specialty}</td>
-                          <td className="p-5 text-[#6b8c8c] text-sm">{doc.description || "N/A"}</td>
+                          <td className="p-5 text-[#6b8c8c] text-sm">{formatAvailability(doc)}</td>
                           <td className="p-5">
                             <div className="flex gap-2">
                               <button onClick={() => handleEditDoctorClick(doc)} disabled={isUpdating} className="p-2 bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white rounded-lg transition-colors inline-flex">
@@ -913,6 +995,71 @@ export default function AdminDashboardPage() {
                       <tr>
                         <td colSpan={3} className="p-8 text-center text-[#6b8c8c]">
                           No gallery items found. Add your first image to the gallery.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        ) : activeTab === "announcements" ? (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-1 bg-white rounded-3xl shadow-sm border border-[#0a3f41]/5 p-8 self-start">
+              <h2 className="font-headline-sm text-headline-sm text-[#0a3f41] font-bold mb-6 flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#5adace]">
+                  add_alert
+                </span>
+                Set New Announcement
+              </h2>
+              <form onSubmit={handleSetAnnouncement} className="space-y-5">
+                <div>
+                  <label className="block text-sm font-bold text-[#0a3f41] mb-2">Announcement Text</label>
+                  <textarea
+                    rows={4}
+                    required
+                    value={newAnnouncementText}
+                    onChange={(e) => setNewAnnouncementText(e.target.value)}
+                    className="w-full px-4 py-3 bg-[#f5f7f7] border border-[#e8ecec] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5adace]/50 focus:border-[#5adace] transition-all"
+                    placeholder="Enter the announcement here..."
+                  ></textarea>
+                </div>
+                <div className="pt-4">
+                  <button
+                    type="submit"
+                    disabled={isUpdating}
+                    className="w-full bg-[#0a3f41] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#0a3f41]/90 shadow-md transition-all active:scale-95 disabled:opacity-50"
+                  >
+                    {isUpdating ? "Setting..." : "Set Announcement"}
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <div className="lg:col-span-2">
+              <div className="bg-white rounded-3xl shadow-sm border border-[#0a3f41]/5 overflow-hidden">
+                <table className="w-full text-left border-collapse">
+                  <thead>
+                    <tr className="bg-[#f5f7f7] text-[#0a3f41] border-b border-[#e8ecec]">
+                      <th className="p-5 font-bold uppercase tracking-widest text-xs w-2/3">Announcement Text</th>
+                      <th className="p-5 font-bold uppercase tracking-widest text-xs">Date Created</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#e8ecec]">
+                    {announcements.map((item) => (
+                        <tr key={item.id} className="hover:bg-[#f5f7f7]/50 transition-colors group cursor-pointer" onClick={() => setNewAnnouncementText(item.text)}>
+                          <td className="p-5">
+                            <div className="font-bold text-[#0a3f41]">{item.text}</div>
+                          </td>
+                          <td className="p-5 text-sm text-[#6b8c8c]">
+                            {new Date(item.createdAt).toLocaleString()}
+                          </td>
+                        </tr>
+                      ))}
+                    {announcements.length === 0 && (
+                      <tr>
+                        <td colSpan={2} className="p-8 text-center text-[#6b8c8c]">
+                          No historical announcements found.
                         </td>
                       </tr>
                     )}

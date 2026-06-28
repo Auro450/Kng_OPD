@@ -22,7 +22,7 @@ export default function GalleryPage() {
   useEffect(() => {
     const fetchGallery = async () => {
       try {
-        const res = await fetch("/api/gallery");
+        const res = await fetch("http://localhost:5000/api/gallery");
         const data = await res.json();
         if (Array.isArray(data)) {
           setGalleryItems(data);

@@ -41,7 +41,7 @@ export default function DiagnosticCentrePage() {
   useEffect(() => {
     async function fetchTests() {
       try {
-        const res = await fetch("/api/tests");
+        const res = await fetch("http://localhost:5000/api/tests");
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) setAllTests(data);
       } catch (err) {}
@@ -71,7 +71,7 @@ export default function DiagnosticCentrePage() {
       type: "Home Collection Request"
     };
     try {
-      const res = await fetch("/api/submit", {
+      const res = await fetch("http://localhost:5000/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(submissionData),

@@ -28,7 +28,7 @@ export function ProfileModal() {
     if (!user) return;
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/bookings?phone=${user.phone}`);
+      const res = await fetch(`http://localhost:5000/api/bookings?phone=${user.phone}`);
       const data = await res.json();
       if (data.success) {
         setBookings(data.bookings);
@@ -43,7 +43,7 @@ export function ProfileModal() {
   const handleCancelBooking = async (id: string) => {
     if (!window.confirm("Are you sure you want to cancel this booking?")) return;
     try {
-      const res = await fetch(`/api/bookings?id=${id}`, { method: 'DELETE' });
+      const res = await fetch(`http://localhost:5000/api/bookings?id=${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
         setBookings(bookings.filter(b => b.id !== id));

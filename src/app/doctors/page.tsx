@@ -6,6 +6,7 @@ import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Footer } from "@/components/Footer";
 import { BookingModal } from "@/components/BookingModal";
 import { useAuth } from "@/context/AuthContext";
+import { formatAvailability } from "@/utils/formatAvailability";
 
 interface Doctor {
   name: string;
@@ -26,7 +27,7 @@ export default function DoctorsPage() {
   useEffect(() => {
     async function fetchDoctors() {
       try {
-        const res = await fetch("/api/doctors");
+        const res = await fetch("http://localhost:5000/api/doctors");
         const data = await res.json();
         if (Array.isArray(data)) {
           setDoctors(data);
@@ -122,7 +123,7 @@ export default function DoctorsPage() {
                     )}
                   </div>
                   <p className="text-on-surface-variant font-body-md mb-8 flex-grow leading-relaxed">
-                    {doc.description || doc.bio || "Providing expert medical care with a focus on patient well-being and clinical excellence."}
+                    {formatAvailability(doc)}
                   </p>
                   <button 
                     onClick={() => {

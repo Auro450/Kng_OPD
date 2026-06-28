@@ -9,6 +9,8 @@ import { Footer } from "@/components/Footer";
 import { BookingModal } from "@/components/BookingModal";
 import { useAuth } from "@/context/AuthContext";
 import { BlogPost, ORIGINAL_BLOGS } from "@/data/blogs";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const BANNERS = [
   "https://lh3.googleusercontent.com/aida-public/AB6AXuCFZTQKTIOgByfV6PvVNnJuA6PyvktyQ85s8F7BN0_3M-4ThFHFn0ZeXYuB-k8tv-mbb0sagFtqMqe2vi2HR8IOXitDKTZGCUR5_kA_FsUyuR38bOgyXrDZoNnyFMyXqkp-BN7LEsfSIsit3fs68gLgpan_e3meNFpmcb5fUCuPQeGAzVYDUuQvjpY_42RSgBMuqaxN0V0O0zmo4h4RztGIbExiZJ--2pQiUYMSYQAh4R9WFMI8vqilXXefGF_e9tVrth90RUITZB7U",
@@ -21,6 +23,8 @@ interface Doctor {
   specialty: string;
   imageurl: string;
   availabilitynotes?: string;
+  availableDays?: number[];
+  availableWeeks?: number[];
 }
 
 
@@ -57,11 +61,11 @@ export default function Home() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const drRes = await fetch("/api/doctors");
+        const drRes = await fetch("http://localhost:5000/api/doctors");
         const drData = await drRes.json();
         if (Array.isArray(drData) && drData.length > 0) setDoctors(drData);
         
-        const blogRes = await fetch("/api/blog");
+        const blogRes = await fetch("http://localhost:5000/api/blog");
         const blogData = await blogRes.json();
         if (Array.isArray(blogData) && blogData.length > 0) setBlogs([...ORIGINAL_BLOGS, ...blogData]);
       } catch (err) {}
@@ -84,7 +88,7 @@ export default function Home() {
   const submitBooking = async (dataToSubmit: any) => {
     setIsSubmitting(true);
     try {
-      const res = await fetch("/api/submit", {
+      const res = await fetch("http://localhost:5000/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSubmit),
@@ -95,6 +99,36 @@ export default function Home() {
       }
     } catch (error) { alert("Error sending request."); }
     finally { setIsSubmitting(false); }
+  };
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({ ...prev, name: user.name, phone: user.phone }));
+    }
+  }, [user]);
+
+  const isDateAvailable = (date: Date) => {
+    const selectedDoc = doctors.find(d => d.name === formData.doctor);
+    
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    if (date < today) return false;
+    
+    if (!selectedDoc) return true;
+
+    const { availableDays, availableWeeks } = selectedDoc;
+    
+    if ((!availableDays || availableDays.length === 0) && (!availableWeeks || availableWeeks.length === 0)) {
+      return true;
+    }
+
+    const dayOfWeek = date.getDay();
+    const weekOfMonth = Math.ceil(date.getDate() / 7);
+
+    const dayMatches = (!availableDays || availableDays.length === 0) || availableDays.includes(dayOfWeek);
+    const weekMatches = (!availableWeeks || availableWeeks.length === 0) || availableWeeks.includes(weekOfMonth);
+
+    return dayMatches && weekMatches;
   };
 
   const handleBookingSubmit = async (e: React.FormEvent) => {
@@ -361,7 +395,22 @@ export default function Home() {
                   <div className="space-y-2.5">
                     <label className="text-[11px] uppercase tracking-widest font-bold text-[#6b8c8c] ml-1">Preferred Date</label>
                     <div className="relative">
-                      <input required min={today} value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all" type="date" />
+                      <DatePicker
+                        selected={formData.date ? new Date(formData.date) : null}
+                        onChange={(date: Date | null) => {
+                          if (date) {
+                            const offsetDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+                            setFormData({...formData, date: offsetDate.toISOString().split("T")[0]});
+                          } else {
+                            setFormData({...formData, date: ""});
+                          }
+                        }}
+                        filterDate={isDateAvailable}
+                        minDate={new Date()}
+                        placeholderText="Select Date"
+                        className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all"
+                        wrapperClassName="w-full block"
+                      />
                     </div>
                   </div>
                 </div>

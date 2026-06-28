@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface Doctor {
   name: string;
@@ -35,7 +37,7 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
     type: "Clinic Appointment"
   });
 
-  const [allDoctors, setAllDoctors] = useState<string[]>([]);
+  const [allDoctors, setAllDoctors] = useState<any[]>([]);
 
   useEffect(() => {
     if (isOpen) {
@@ -45,11 +47,11 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
         setFormData(prev => ({ ...prev, doctor: defaultDoctor }));
       }
       // Fetch doctors
-      fetch("/api/doctors")
+      fetch("http://localhost:5000/api/doctors")
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) {
-            setAllDoctors(data.map(d => d.name));
+            setAllDoctors(data);
           }
         })
         .catch(err => console.error("Error fetching doctors:", err));
@@ -65,7 +67,7 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
   const submitBooking = async (dataToSubmit: any) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch("/api/submit", {
+      const response = await fetch("http://localhost:5000/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSubmit),
@@ -84,6 +86,30 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const isDateAvailable = (date: Date) => {
+    const selectedDoc = allDoctors.find(d => d.name === formData.doctor);
+    
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    if (date < today) return false;
+    
+    if (!selectedDoc) return true;
+
+    const { availableDays, availableWeeks } = selectedDoc;
+    
+    if ((!availableDays || availableDays.length === 0) && (!availableWeeks || availableWeeks.length === 0)) {
+      return true;
+    }
+
+    const dayOfWeek = date.getDay();
+    const weekOfMonth = Math.ceil(date.getDate() / 7);
+
+    const dayMatches = (!availableDays || availableDays.length === 0) || availableDays.includes(dayOfWeek);
+    const weekMatches = (!availableWeeks || availableWeeks.length === 0) || availableWeeks.includes(weekOfMonth);
+
+    return dayMatches && weekMatches;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -143,7 +169,22 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
               </div>
               <div className="space-y-2">
                 <label className="font-label-sm text-label-sm text-on-surface-variant ml-2 uppercase tracking-widest font-bold">Preferred Date</label>
-                <input required min={today} value={formData.date} onChange={(e) => setFormData({...formData, date: e.target.value})} className="w-full p-5 rounded-2xl bg-surface-container border border-outline-variant text-gray-900 outline-none focus:ring-2 focus:ring-primary/20 transition-all" type="date" />
+                <DatePicker
+                  selected={formData.date ? new Date(formData.date) : null}
+                  onChange={(date: Date | null) => {
+                    if (date) {
+                      const offsetDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+                      setFormData({...formData, date: offsetDate.toISOString().split("T")[0]});
+                    } else {
+                      setFormData({...formData, date: ""});
+                    }
+                  }}
+                  filterDate={isDateAvailable}
+                  minDate={new Date()}
+                  placeholderText="Select Date"
+                  className="w-full p-5 rounded-2xl bg-surface-container border border-outline-variant text-gray-900 outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                  wrapperClassName="w-full block"
+                />
               </div>
             </div>
 
@@ -152,8 +193,8 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
                 <label className="font-label-sm text-label-sm text-on-surface-variant ml-2 uppercase tracking-widest font-bold">Doctor to Visit</label>
                 <select required value={formData.doctor} onChange={(e) => setFormData({...formData, doctor: e.target.value})} className="w-full p-5 rounded-2xl bg-surface-container border border-outline-variant text-gray-900 outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer">
                   <option disabled value="Select a Doctor">Choose Specialist...</option>
-                  {allDoctors.map((name, idx) => (
-                    <option key={idx} value={name}>{name}</option>
+                  {allDoctors.map((doc, idx) => (
+                    <option key={idx} value={doc.name}>{doc.name}</option>
                   ))}
                 </select>
               </div>
