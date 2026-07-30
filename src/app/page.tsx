@@ -25,10 +25,36 @@ interface Doctor {
   availabilitynotes?: string;
   availableDays?: number[];
   availableWeeks?: number[];
+  dummyRating?: string;
+  useDummyRating?: boolean;
 }
 
+const FeaturedReviewSlider = ({ reviews }: { reviews: any[] }) => {
+  const [currentIndex, setCurrentIndex] = useState(0);
 
+  useEffect(() => {
+    if (reviews.length <= 1) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % reviews.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [reviews]);
 
+  if (reviews.length === 0) return null;
+
+  return (
+    <div className="bg-[#0a3f41] border border-white/10 rounded-2xl p-4 flex items-center min-h-[90px] shadow-sm relative overflow-hidden mt-3 w-full">
+      <div className="flex w-full transition-transform duration-700 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
+        {reviews.map((review, idx) => (
+          <div key={idx} className="w-full flex-shrink-0 flex flex-col justify-center px-2">
+            <p className="text-[26px] text-[#5adace] italic text-center line-clamp-3 leading-relaxed font-bold">"{review.text}"</p>
+            <p className="text-[22px] font-bold text-white text-center mt-3 uppercase tracking-widest">- {review.patientName}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 export default function Home() {
   const { user, openLoginModal } = useAuth();
@@ -48,7 +74,17 @@ export default function Home() {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [randomDoctors, setRandomDoctors] = useState<Doctor[]>([]);
   const [blogs, setBlogs] = useState<BlogPost[]>(ORIGINAL_BLOGS);
+  const [reviews, setReviews] = useState<any[]>([]);
 
+  const getDoctorAverageRating = (doctorName: string, doctorObj?: Doctor) => {
+    if (doctorObj?.useDummyRating && doctorObj?.dummyRating) {
+      return Number(doctorObj.dummyRating).toFixed(1);
+    }
+    const docReviews = reviews.filter(r => r.doctorName === doctorName && r.rating > 0);
+    if (docReviews.length === 0) return null;
+    const avg = docReviews.reduce((sum, r) => sum + r.rating, 0) / docReviews.length;
+    return avg.toFixed(1);
+  };
 
   const handleBookAppointment = () => {
     if (!user) {
@@ -68,6 +104,10 @@ export default function Home() {
         const blogRes = await fetch("http://localhost:5000/api/blog");
         const blogData = await blogRes.json();
         if (Array.isArray(blogData) && blogData.length > 0) setBlogs([...ORIGINAL_BLOGS, ...blogData]);
+
+        const reviewRes = await fetch("http://localhost:5000/api/reviews");
+        const reviewData = await reviewRes.json();
+        if (reviewData.success) setReviews(reviewData.reviews);
       } catch (err) {}
     }
     fetchData();
@@ -91,7 +131,7 @@ export default function Home() {
       const res = await fetch("http://localhost:5000/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...dataToSubmit, userPhone: user?.phone }),
+        body: JSON.stringify({ ...dataToSubmit, userEmail: user?.email }),
       });
       if ((await res.json()).success) {
         alert("Booking request sent successfully!");
@@ -160,7 +200,7 @@ export default function Home() {
             <div className="absolute inset-0 bg-on-background/60"></div>
           </div>
           
-          <div className="relative z-10 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop w-full">
+          <div className="relative z-10 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop w-full flex flex-col md:flex-row items-center justify-between gap-10">
             <div className="max-w-2xl text-white">
               <h1 className="font-headline-xl text-headline-xl md:text-7xl mb-8 leading-[1.1] font-bold">
                 Exceptional Care,<br/><span className="text-[#56C5C5]">Every Single Time.</span>
@@ -183,6 +223,17 @@ export default function Home() {
                 </Link>
               </div>
             </div>
+
+            {/* Right Side Pathology Reviews */}
+            {reviews.filter(r => r.type === "Pathology" && r.featured).length > 0 && (
+              <div className="hidden md:block w-full max-w-[350px] backdrop-blur-xl bg-white/5 border border-white/20 p-6 rounded-3xl shadow-2xl ml-auto mt-20">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="material-symbols-outlined text-[#5adace] text-2xl">science</span>
+                  <h3 className="text-white font-bold text-lg">Pathology Excellence</h3>
+                </div>
+                <FeaturedReviewSlider reviews={reviews.filter(r => r.type === "Pathology" && r.featured)} />
+              </div>
+            )}
           </div>
         </section>
 
@@ -348,13 +399,25 @@ export default function Home() {
               
               <div className="space-y-6 mb-12">
                 {(randomDoctors.length > 0 ? randomDoctors : doctors.slice(0, 3)).map((doc, idx) => (
-                  <div key={idx} className="flex items-center gap-6 p-6 bg-white/5 rounded-[2rem] border border-white/10 transition-all duration-300">
-                    <div className="w-[4.5rem] h-[4.5rem] rounded-full overflow-hidden border-2 border-[#5adace] shrink-0">
-                      <img src={doc.imageurl} className="w-full h-full object-cover" alt={doc.name} />
+                  <div key={idx} className="bg-white/5 rounded-[2rem] border border-white/10 transition-all duration-300 overflow-hidden flex flex-col">
+                    <div className="flex items-center gap-6 p-6 pb-4">
+                      <div className="w-[4.5rem] h-[4.5rem] rounded-full overflow-hidden border-2 border-[#5adace] shrink-0">
+                        <img src={doc.imageurl} className="w-full h-full object-cover" alt={doc.name} />
+                      </div>
+                      <div>
+                        <h4 className="font-headline-sm text-lg text-white mb-1.5">{doc.name}</h4>
+                        <p className="text-[#5adace] text-[15px] flex items-center gap-2">
+                          {doc.specialty}
+                          {getDoctorAverageRating(doc.name, doc) && (
+                            <span className="bg-orange-50/10 text-orange-400 px-2 py-0.5 rounded-full text-[11px] font-bold whitespace-nowrap flex items-center border border-orange-400/20">
+                              {getDoctorAverageRating(doc.name, doc)} <span className="material-symbols-outlined text-[12px] ml-0.5">star</span>
+                            </span>
+                          )}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-headline-sm text-lg text-white mb-1.5">{doc.name}</h4>
-                      <p className="text-[#5adace] text-[15px]">{doc.specialty}</p>
+                    <div className="px-6 pb-6 pt-0">
+                      <FeaturedReviewSlider reviews={reviews.filter(r => r.doctorName === doc.name && r.featured && r.text)} />
                     </div>
                   </div>
                 ))}
@@ -393,8 +456,21 @@ export default function Home() {
                     <input required type="tel" maxLength={10} pattern="[0-9]{10}" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value.replace(/\D/g, '')})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" placeholder="Contact number" />
                   </div>
                   <div className="space-y-2.5">
-                    <label className="text-[11px] uppercase tracking-widest font-bold text-[#6b8c8c] ml-1">Preferred Date</label>
+                    <label className="text-[11px] uppercase tracking-widest font-bold text-[#6b8c8c] ml-1">Doctor To Visit</label>
                     <div className="relative">
+                      <select value={formData.doctor} onChange={e => setFormData({...formData, doctor: e.target.value, date: ""})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all appearance-none cursor-pointer">
+                        <option disabled value="Select a Doctor">Choose Specialist...</option>
+                        {doctors.map(doc => <option key={doc.name} value={doc.name}>{doc.name}</option>)}
+                      </select>
+                      <span className="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[#6b8c8c] pointer-events-none text-xl">expand_more</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2.5">
+                    <label className="text-[11px] uppercase tracking-widest font-bold text-[#6b8c8c] ml-1">Preferred Date</label>
+                    <div className="relative" title={formData.doctor === "Select a Doctor" ? "Please select a doctor first" : ""}>
                       <DatePicker
                         selected={formData.date ? new Date(formData.date) : null}
                         onChange={(date: Date | null) => {
@@ -407,23 +483,11 @@ export default function Home() {
                         }}
                         filterDate={isDateAvailable}
                         minDate={new Date()}
-                        placeholderText="Select Date"
-                        className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all"
+                        placeholderText={formData.doctor === "Select a Doctor" ? "Select doctor first..." : "Select Date"}
+                        disabled={formData.doctor === "Select a Doctor"}
+                        className={`w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all ${formData.doctor === "Select a Doctor" ? "opacity-60 cursor-not-allowed" : ""}`}
                         wrapperClassName="w-full block"
                       />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2.5">
-                    <label className="text-[11px] uppercase tracking-widest font-bold text-[#6b8c8c] ml-1">Doctor To Visit</label>
-                    <div className="relative">
-                      <select value={formData.doctor} onChange={e => setFormData({...formData, doctor: e.target.value})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all appearance-none cursor-pointer">
-                        <option disabled value="Select a Doctor">Choose Specialist...</option>
-                        {doctors.map(doc => <option key={doc.name} value={doc.name}>{doc.name}</option>)}
-                      </select>
-                      <span className="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-[#6b8c8c] pointer-events-none text-xl">expand_more</span>
                     </div>
                   </div>
                   <div className="space-y-2.5">

@@ -4,12 +4,14 @@ import React, { createContext, useContext, useState, ReactNode, useEffect } from
 
 interface User {
   name: string;
+  email: string;
+  picture?: string;
   phone: string;
 }
 
 interface AuthContextType {
   user: User | null;
-  login: (name: string, phone: string) => void;
+  login: (name: string, email: string, picture: string | undefined, phone: string) => void;
   logout: () => void;
   isLoginModalOpen: boolean;
   openLoginModal: (callback?: () => void) => void;
@@ -38,8 +40,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = (name: string, phone: string) => {
-    const userData = { name, phone };
+  const login = (name: string, email: string, picture: string | undefined, phone: string) => {
+    const userData = { name, email, picture, phone };
     setUser(userData);
     localStorage.setItem("ray_medical_user", JSON.stringify(userData));
     

@@ -70,7 +70,7 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
       const response = await fetch("http://localhost:5000/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...dataToSubmit, userPhone: user?.phone }),
+        body: JSON.stringify({ ...dataToSubmit, userEmail: user?.email }),
       });
 
       const result = await response.json();
@@ -168,35 +168,38 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
                 <input required maxLength={10} pattern="[0-9]{10}" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value.replace(/\D/g, '')})} className="w-full p-5 rounded-2xl bg-surface-container border border-outline-variant text-gray-900 outline-none focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Contact number" type="tel" />
               </div>
               <div className="space-y-2">
-                <label className="font-label-sm text-label-sm text-on-surface-variant ml-2 uppercase tracking-widest font-bold">Preferred Date</label>
-                <DatePicker
-                  selected={formData.date ? new Date(formData.date) : null}
-                  onChange={(date: Date | null) => {
-                    if (date) {
-                      const offsetDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
-                      setFormData({...formData, date: offsetDate.toISOString().split("T")[0]});
-                    } else {
-                      setFormData({...formData, date: ""});
-                    }
-                  }}
-                  filterDate={isDateAvailable}
-                  minDate={new Date()}
-                  placeholderText="Select Date"
-                  className="w-full p-5 rounded-2xl bg-surface-container border border-outline-variant text-gray-900 outline-none focus:ring-2 focus:ring-primary/20 transition-all"
-                  wrapperClassName="w-full block"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
                 <label className="font-label-sm text-label-sm text-on-surface-variant ml-2 uppercase tracking-widest font-bold">Doctor to Visit</label>
-                <select required value={formData.doctor} onChange={(e) => setFormData({...formData, doctor: e.target.value})} className="w-full p-5 rounded-2xl bg-surface-container border border-outline-variant text-gray-900 outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer">
+                <select required value={formData.doctor} onChange={(e) => setFormData({...formData, doctor: e.target.value, date: ""})} className="w-full p-5 rounded-2xl bg-surface-container border border-outline-variant text-gray-900 outline-none focus:ring-2 focus:ring-primary/20 transition-all cursor-pointer">
                   <option disabled value="Select a Doctor">Choose Specialist...</option>
                   {allDoctors.map((doc, idx) => (
                     <option key={idx} value={doc.name}>{doc.name}</option>
                   ))}
                 </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="font-label-sm text-label-sm text-on-surface-variant ml-2 uppercase tracking-widest font-bold">Preferred Date</label>
+                <div title={formData.doctor === "Select a Doctor" ? "Please select a doctor first" : ""}>
+                  <DatePicker
+                    selected={formData.date ? new Date(formData.date) : null}
+                    onChange={(date: Date | null) => {
+                      if (date) {
+                        const offsetDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+                        setFormData({...formData, date: offsetDate.toISOString().split("T")[0]});
+                      } else {
+                        setFormData({...formData, date: ""});
+                      }
+                    }}
+                    filterDate={isDateAvailable}
+                    minDate={new Date()}
+                    placeholderText={formData.doctor === "Select a Doctor" ? "Select doctor first..." : "Select Date"}
+                    disabled={formData.doctor === "Select a Doctor"}
+                    className={`w-full p-5 rounded-2xl bg-surface-container border border-outline-variant text-gray-900 outline-none focus:ring-2 focus:ring-primary/20 transition-all ${formData.doctor === "Select a Doctor" ? "opacity-60 cursor-not-allowed" : ""}`}
+                    wrapperClassName="w-full block"
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">

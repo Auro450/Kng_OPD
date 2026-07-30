@@ -69,7 +69,7 @@ export default function DiagnosticCentrePage() {
         return `${test?.code}: ${test?.name}`;
       }).join(", "),
       type: "Home Collection Request",
-      userPhone: user?.phone
+      userEmail: user?.email
     };
     try {
       const res = await fetch("http://localhost:5000/api/submit", {

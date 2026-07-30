@@ -4,17 +4,27 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 
 export function ProfileModal() {
-  const { user, isProfileModalOpen, closeProfileModal, logout } = useAuth();
+  const { user, isProfileModalOpen, closeProfileModal, logout, login } = useAuth();
   
   const [show, setShow] = useState(false);
   const [bookings, setBookings] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"doctors" | "pathology">("doctors");
+  const [isEditingPhone, setIsEditingPhone] = useState(false);
+  const [newPhone, setNewPhone] = useState("");
+  const [isSavingPhone, setIsSavingPhone] = useState(false);
+
+  const [reviewingBooking, setReviewingBooking] = useState<any>(null);
+  const [rating, setRating] = useState<number>(5);
+  const [reviewText, setReviewText] = useState("");
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewedBookingIds, setReviewedBookingIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (isProfileModalOpen) {
       document.body.style.overflow = "hidden";
       setShow(true);
+      setNewPhone(user?.phone || "");
       fetchBookings();
     } else {
       setShow(false);
@@ -24,11 +34,72 @@ export function ProfileModal() {
     }
   }, [isProfileModalOpen, user]);
 
+  const handleSavePhone = async () => {
+    if (!newPhone.match(/^[0-9]{10}$/)) {
+      alert("Please enter a valid 10-digit phone number");
+      return;
+    }
+    if (!user) return;
+    setIsSavingPhone(true);
+    try {
+      const res = await fetch('http://localhost:5000/api/users', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user.email, phone: newPhone })
+      });
+      const data = await res.json();
+      if (data.success) {
+        login(user.name, user.email, user.picture, newPhone);
+        setIsEditingPhone(false);
+      } else {
+        alert("Failed to update phone number.");
+      }
+    } catch (e) {
+      alert("Error updating phone number.");
+    } finally {
+      setIsSavingPhone(false);
+    }
+  };
+
+  const handleSubmitReview = async () => {
+    if (!reviewingBooking || !user) return;
+    setIsSubmittingReview(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          bookingId: reviewingBooking.id,
+          type: reviewingBooking.type === "Home Collection Request" ? "Pathology" : "Doctor",
+          doctorName: reviewingBooking.type === "Home Collection Request" ? undefined : reviewingBooking.doctor,
+          patientName: user.name,
+          patientEmail: user.email,
+          rating,
+          text: reviewText
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setReviewedBookingIds([...reviewedBookingIds, reviewingBooking.id]);
+        setReviewingBooking(null);
+        setRating(5);
+        setReviewText("");
+        alert("Review submitted successfully!");
+      } else {
+        alert(data.message || "Failed to submit review.");
+      }
+    } catch (e) {
+      alert("Error submitting review.");
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
   const fetchBookings = async () => {
     if (!user) return;
     setIsLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/bookings?phone=${user.phone}`);
+      const res = await fetch(`http://localhost:5000/api/bookings?email=${user.email}`);
       const data = await res.json();
       if (data.success) {
         setBookings(data.bookings);
@@ -71,7 +142,38 @@ export function ProfileModal() {
         <div className="p-8 md:p-10 border-b border-outline-variant/20 flex justify-between items-center bg-primary text-on-primary">
           <div>
             <h2 className="font-headline-md text-headline-md font-bold">My Profile</h2>
-            {user && <p className="text-on-primary/80 mt-1">{user.name} • {user.phone}</p>}
+            {user && (
+              <div className="flex items-center gap-3 mt-2">
+                {user.picture && <img src={user.picture} alt="Profile" className="w-10 h-10 rounded-full" />}
+                <div className="text-on-primary/80 font-medium">
+                  <p>{user.name} • {user.email}</p>
+                  {isEditingPhone ? (
+                    <div className="flex items-center gap-2 mt-2">
+                      <input 
+                        value={newPhone} 
+                        onChange={e => setNewPhone(e.target.value.replace(/\D/g, ''))} 
+                        maxLength={10} 
+                        className="px-3 py-1 text-sm text-gray-900 rounded outline-none" 
+                        placeholder="10-digit number"
+                      />
+                      <button onClick={handleSavePhone} disabled={isSavingPhone} className="bg-white/20 hover:bg-white/30 px-3 py-1 rounded text-sm transition-colors">
+                        {isSavingPhone ? "Saving..." : "Save"}
+                      </button>
+                      <button onClick={() => { setIsEditingPhone(false); setNewPhone(user.phone || ""); }} className="text-white hover:text-white/70">
+                        <span className="material-symbols-outlined text-sm">close</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 mt-1">
+                      <p className="text-sm opacity-90">Phone: {user.phone}</p>
+                      <button onClick={() => setIsEditingPhone(true)} className="text-white hover:text-white/70">
+                        <span className="material-symbols-outlined text-[16px]">edit</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
           <button onClick={closeProfileModal} className="w-10 h-10 rounded-full flex items-center justify-center bg-white/20 hover:bg-white/30 transition-colors text-white">
             <span className="material-symbols-outlined">close</span>
@@ -205,6 +307,50 @@ export function ProfileModal() {
                           Cancel Booking
                         </button>
                       </div>
+                    )}
+                    {booking.status === "Completed" && (booking.doctor || booking.type === "Home Collection Request") && !reviewedBookingIds.includes(booking.id) && (
+                      <div className="mt-3 border-t border-outline-variant/30 pt-3">
+                        {reviewingBooking?.id === booking.id ? (
+                          <div className="bg-surface p-3 rounded-xl border border-outline-variant/50">
+                            <p className="text-sm font-bold text-primary mb-2">
+                              Rate {booking.type === "Home Collection Request" ? "Pathology Services" : `Dr. ${booking.doctor}`}
+                            </p>
+                            <div className="flex gap-1 mb-3">
+                              {[1, 2, 3, 4, 5].map(star => (
+                                <button key={star} onClick={() => setRating(star)} className={`material-symbols-outlined text-2xl transition-colors ${rating >= star ? 'text-orange-400' : 'text-gray-300 hover:text-orange-200'}`}>
+                                  star
+                                </button>
+                              ))}
+                            </div>
+                            <textarea
+                              value={reviewText}
+                              onChange={e => setReviewText(e.target.value)}
+                              placeholder="Share your experience (optional)..."
+                              className="w-full p-2 text-sm border border-outline-variant rounded-lg mb-3 outline-none focus:ring-2 focus:ring-primary/30"
+                              rows={2}
+                            />
+                            <div className="flex gap-2">
+                              <button onClick={handleSubmitReview} disabled={isSubmittingReview} className="flex-1 bg-primary text-on-primary py-2 rounded-lg text-xs font-bold hover:bg-primary/90 transition-colors">
+                                {isSubmittingReview ? "Submitting..." : "Submit Review"}
+                              </button>
+                              <button onClick={() => setReviewingBooking(null)} className="px-4 bg-surface-variant text-on-surface-variant py-2 rounded-lg text-xs font-bold hover:bg-surface-variant/80 transition-colors">
+                                Cancel
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button onClick={() => { setReviewingBooking(booking); setRating(5); setReviewText(""); }} className="w-full flex items-center justify-center gap-2 bg-orange-50 hover:bg-orange-100 text-orange-600 py-2.5 px-4 rounded-xl text-xs font-bold transition-colors border border-orange-100">
+                            <span className="material-symbols-outlined text-[16px]">star_rate</span>
+                            Review {booking.type === "Home Collection Request" ? "Service" : "Doctor"}
+                          </button>
+                        )}
+                      </div>
+                    )}
+                    {booking.status === "Completed" && reviewedBookingIds.includes(booking.id) && (
+                       <div className="mt-3 text-center py-2.5 bg-green-50 text-green-700 text-xs font-bold rounded-xl flex justify-center items-center gap-1 border border-green-100">
+                          <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                          Review Submitted
+                       </div>
                     )}
                   </div>
                 ))
