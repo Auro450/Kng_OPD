@@ -300,7 +300,7 @@ app.get('/api/bookings', async (req, res) => {
         const id = req.query.id;
         const bookings = await readJson('bookings.json');
         let filtered = bookings;
-        if (phone) filtered = bookings.filter(b => b.phone === phone);
+        if (phone) filtered = bookings.filter(b => b.phone === phone || b.userPhone === phone);
         if (id) filtered = bookings.filter(b => b.id === id);
         res.json({ success: true, bookings: filtered });
     } catch (error) {

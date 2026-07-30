@@ -91,7 +91,7 @@ export default function Home() {
       const res = await fetch("http://localhost:5000/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataToSubmit),
+        body: JSON.stringify({ ...dataToSubmit, userPhone: user?.phone }),
       });
       if ((await res.json()).success) {
         alert("Booking request sent successfully!");

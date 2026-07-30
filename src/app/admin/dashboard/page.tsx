@@ -56,7 +56,7 @@ export default function AdminDashboardPage() {
     }));
   };
 
-  const handleTabChange = (tab: "doctors" | "pathology" | "bin" | "customers" | "doctors-manage" | "tests-manage" | "gallery-manage") => {
+  const handleTabChange = (tab: "doctors" | "pathology" | "bin" | "customers" | "doctors-manage" | "tests-manage" | "gallery-manage" | "announcements") => {
     setActiveTab(tab);
   };
 
@@ -682,7 +682,7 @@ export default function AdminDashboardPage() {
                     type="button"
                     onClick={() => {
                       setEditingDoctorId(null);
-                      setNewDoctorForm({ name: "", specialty: "", description: "", experience: "", image: null });
+                      setNewDoctorForm({ name: "", specialty: "", description: "", experience: "", image: null, availableDays: [], availableWeeks: [] });
                     }} 
                     className="text-xs font-bold text-[#6b8c8c] hover:text-[#0a3f41] transition-colors underline"
                   >
@@ -698,13 +698,14 @@ export default function AdminDashboardPage() {
                   <div>
                     <label className="block text-sm font-bold text-[#0a3f41] mb-2 flex justify-between">
                       <span>Available Days</span>
-                      <button type="button" onClick={() => setNewDoctorForm(prev => ({...prev, availableDays: prev.availableDays.length === 7 ? [] : [0, 1, 2, 3, 4, 5, 6]}))} className="text-[#5adace] hover:underline">Select All</button>
+                      <button type="button" onClick={() => setNewDoctorForm(prev => ({...prev, availableDays: (prev.availableDays || []).length === 7 ? [] : [0, 1, 2, 3, 4, 5, 6]}))} className="text-[#5adace] hover:underline">Select All</button>
                     </label>
                     <div className="flex flex-wrap gap-2">
                       {["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day, idx) => (
                         <label key={day} className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-lg border border-[#e8ecec] cursor-pointer hover:border-[#5adace] transition-colors">
-                          <input type="checkbox" checked={newDoctorForm.availableDays.includes(idx)} onChange={(e) => {
-                            const nextDays = e.target.checked ? [...newDoctorForm.availableDays, idx] : newDoctorForm.availableDays.filter(d => d !== idx);
+                          <input type="checkbox" checked={(newDoctorForm.availableDays || []).includes(idx)} onChange={(e) => {
+                            const currentDays = newDoctorForm.availableDays || [];
+                            const nextDays = e.target.checked ? [...currentDays, idx] : currentDays.filter(d => d !== idx);
                             setNewDoctorForm({...newDoctorForm, availableDays: nextDays});
                           }} className="text-[#5adace] rounded w-4 h-4 cursor-pointer" />
                           <span className="text-sm font-medium text-[#0a3f41]">{day}</span>
@@ -715,13 +716,14 @@ export default function AdminDashboardPage() {
                   <div>
                     <label className="block text-sm font-bold text-[#0a3f41] mb-2 flex justify-between">
                       <span>Available Weeks of Month</span>
-                      <button type="button" onClick={() => setNewDoctorForm(prev => ({...prev, availableWeeks: prev.availableWeeks.length === 5 ? [] : [1, 2, 3, 4, 5]}))} className="text-[#5adace] hover:underline">Select All</button>
+                      <button type="button" onClick={() => setNewDoctorForm(prev => ({...prev, availableWeeks: (prev.availableWeeks || []).length === 5 ? [] : [1, 2, 3, 4, 5]}))} className="text-[#5adace] hover:underline">Select All</button>
                     </label>
                     <div className="flex flex-wrap gap-2">
                       {[1, 2, 3, 4, 5].map(week => (
                         <label key={week} className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-lg border border-[#e8ecec] cursor-pointer hover:border-[#5adace] transition-colors">
-                          <input type="checkbox" checked={newDoctorForm.availableWeeks.includes(week)} onChange={(e) => {
-                            const nextWeeks = e.target.checked ? [...newDoctorForm.availableWeeks, week] : newDoctorForm.availableWeeks.filter(w => w !== week);
+                          <input type="checkbox" checked={(newDoctorForm.availableWeeks || []).includes(week)} onChange={(e) => {
+                            const currentWeeks = newDoctorForm.availableWeeks || [];
+                            const nextWeeks = e.target.checked ? [...currentWeeks, week] : currentWeeks.filter(w => w !== week);
                             setNewDoctorForm({...newDoctorForm, availableWeeks: nextWeeks});
                           }} className="text-[#5adace] rounded w-4 h-4 cursor-pointer" />
                           <span className="text-sm font-medium text-[#0a3f41]">Week {week}</span>

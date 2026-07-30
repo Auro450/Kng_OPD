@@ -68,7 +68,8 @@ export default function DiagnosticCentrePage() {
         const test = allTests.find(t => t.code === code);
         return `${test?.code}: ${test?.name}`;
       }).join(", "),
-      type: "Home Collection Request"
+      type: "Home Collection Request",
+      userPhone: user?.phone
     };
     try {
       const res = await fetch("http://localhost:5000/api/submit", {
