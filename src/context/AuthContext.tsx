@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { getApiBaseUrl } from "@/utils/apiConfig";
 
 interface User {
   name: string;
@@ -46,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem("ray_medical_user", JSON.stringify(userData));
     
     // Register or update user in backend database
-    fetch("http://localhost:5000/api/users", {
+    fetch(`${getApiBaseUrl()}/api/users`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

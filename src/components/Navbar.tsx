@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { NotificationBell } from "./NotificationBell";
 
 interface NavbarProps {
   onOpenModal: () => void;
@@ -30,7 +31,9 @@ export function Navbar({ onOpenModal }: NavbarProps) {
       if (pathname === "/doctors") setActiveTab("Doctors");
       else if (pathname === "/blog") setActiveTab("Blog");
       else if (pathname === "/diagnostic-centre") setActiveTab("Diagnostic Centre");
+      else if (pathname === "/medicine") setActiveTab("Medicine");
       else if (pathname === "/gallery") setActiveTab("Gallery");
+      else if (pathname === "/events") setActiveTab("Events");
       else if (hash === "#services") setActiveTab("Services");
       else if (hash === "#footer") setActiveTab("Contact");
       else if (hash === "#hero" || (pathname === "/" && !hash)) setActiveTab("About Us");
@@ -52,17 +55,17 @@ export function Navbar({ onOpenModal }: NavbarProps) {
   const getLinkClass = (tabName: string) => {
     const isActive = activeTab === tabName;
     return isActive 
-      ? "text-[#5adace] font-bold border-b-2 border-[#5adace] pb-1 font-label-sm text-label-sm transition-all"
-      : "text-white hover:text-[#5adace] transition-colors font-label-sm text-label-sm";
+      ? "text-[#5adace] font-bold border-b-2 border-[#5adace] pb-1 text-sm lg:text-base xl:text-lg whitespace-nowrap transition-all"
+      : "text-white hover:text-[#5adace] transition-colors text-sm lg:text-base xl:text-lg font-medium whitespace-nowrap";
   };
 
   return (
     <nav className="bg-[#181c1e] backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
-      <div className="flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-container-max mx-auto">
-        <Link href="/" className="text-xl md:text-headline-md font-headline-md font-bold text-white hover:opacity-80 transition-opacity">
+      <div className="flex justify-between items-center w-full px-6 md:px-12 lg:px-16 py-4 max-w-[1920px] mx-auto gap-4">
+        <Link href="/" className="text-xl md:text-2xl lg:text-3xl font-headline-md font-extrabold text-white hover:opacity-80 transition-opacity whitespace-nowrap flex-shrink-0">
           Ray's Medical
         </Link>
-        <div className="hidden md:flex items-center gap-6 lg:gap-10">
+        <div className="hidden lg:flex flex-1 justify-center items-center gap-3 xl:gap-6 overflow-hidden">
           <Link 
             href="/#services" 
             onClick={() => handleTabClick("Services")}
@@ -76,6 +79,13 @@ export function Navbar({ onOpenModal }: NavbarProps) {
             className={getLinkClass("Diagnostic Centre")}
           >
             Diagnostic Centre
+          </Link>
+          <Link 
+            href="/medicine" 
+            onClick={() => handleTabClick("Medicine")}
+            className={getLinkClass("Medicine")}
+          >
+            Medicine
           </Link>
           <Link 
             href="/doctors" 
@@ -99,6 +109,13 @@ export function Navbar({ onOpenModal }: NavbarProps) {
             Gallery
           </Link>
           <Link 
+            href="/events" 
+            onClick={() => handleTabClick("Events")}
+            className={getLinkClass("Events")}
+          >
+            Events
+          </Link>
+          <Link 
             href="/#footer" 
             onClick={() => handleTabClick("Contact")}
             className={getLinkClass("Contact")}
@@ -106,26 +123,27 @@ export function Navbar({ onOpenModal }: NavbarProps) {
             Contact
           </Link>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <NotificationBell />
           {user && (
             <button
               onClick={openProfileModal}
-              className="hidden sm:inline-flex items-center gap-2 border border-[#5adace] text-[#5adace] px-6 py-2 rounded-full font-label-sm text-label-sm hover:bg-[#5adace]/10 transition-all active:scale-95 duration-150 ease-in-out font-bold"
+              className="hidden sm:inline-flex items-center gap-2 border border-[#5adace] text-[#5adace] px-6 py-2.5 rounded-full text-sm md:text-base hover:bg-[#5adace]/10 transition-all active:scale-95 duration-150 ease-in-out font-bold"
             >
-              <span className="material-symbols-outlined text-sm">person</span>
+              <span className="material-symbols-outlined text-base">person</span>
               {user.name.split(' ')[0]}
             </button>
           )}
           <button
             onClick={handleBookAppointment}
-            className="hidden sm:inline-block bg-[#5adace] text-[#00201d] px-6 py-2 rounded-full font-label-sm text-label-sm hover:opacity-90 transition-all active:scale-95 duration-150 ease-in-out font-bold"
+            className="hidden sm:inline-block bg-[#5adace] text-[#00201d] px-6 py-2.5 rounded-full text-sm md:text-base hover:opacity-90 transition-all active:scale-95 duration-150 ease-in-out font-bold"
           >
             Book Appointment
           </button>
           
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden text-white hover:text-[#5adace] transition-colors p-1"
+            className="lg:hidden text-white hover:text-[#5adace] transition-colors p-1"
             aria-label="Toggle Menu"
           >
             <span className="material-symbols-outlined text-3xl">
@@ -137,7 +155,7 @@ export function Navbar({ onOpenModal }: NavbarProps) {
       
       {/* Mobile menu dropdown */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-[#181c1e] border-t border-white/10 px-margin-mobile py-4 flex flex-col gap-2">
+        <div className="lg:hidden bg-[#181c1e] border-t border-white/10 px-4 py-4 flex flex-col gap-2">
           <Link 
             href="/#services" 
             onClick={() => handleTabClick("Services")}
@@ -151,6 +169,13 @@ export function Navbar({ onOpenModal }: NavbarProps) {
             className={`py-2 px-3 rounded-lg transition-colors font-body-md ${activeTab === "Diagnostic Centre" ? "bg-white/10 text-[#5adace] font-bold" : "text-white hover:bg-white/5"}`}
           >
             Diagnostic Centre
+          </Link>
+          <Link 
+            href="/medicine" 
+            onClick={() => handleTabClick("Medicine")}
+            className={`py-2 px-3 rounded-lg transition-colors font-body-md ${activeTab === "Medicine" ? "bg-white/10 text-[#5adace] font-bold" : "text-white hover:bg-white/5"}`}
+          >
+            Medicine
           </Link>
           <Link 
             href="/doctors" 
@@ -172,6 +197,13 @@ export function Navbar({ onOpenModal }: NavbarProps) {
             className={`py-2 px-3 rounded-lg transition-colors font-body-md ${activeTab === "Gallery" ? "bg-white/10 text-[#5adace] font-bold" : "text-white hover:bg-white/5"}`}
           >
             Gallery
+          </Link>
+          <Link 
+            href="/events" 
+            onClick={() => handleTabClick("Events")}
+            className={`py-2 px-3 rounded-lg transition-colors font-body-md ${activeTab === "Events" ? "bg-white/10 text-[#5adace] font-bold" : "text-white hover:bg-white/5"}`}
+          >
+            Events
           </Link>
           <Link 
             href="/#footer" 

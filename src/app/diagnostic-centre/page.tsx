@@ -25,7 +25,7 @@ export default function DiagnosticCentrePage() {
   const [selectedTests, setSelectedTests] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [collectionForm, setCollectionForm] = useState({
-    name: "", phone: "", age: "", gender: "Male", address: "", date: "", timeSlot: "07:00 AM - 09:00 AM", notes: "", referralDoctor: ""
+    name: "", phone: "", age: "", gender: "Male", address: "", date: "", timeSlot: "07:00 AM - 09:00 AM", notes: "", referralDoctor: "", prescription: null as File | null
   });
   const { user, openLoginModal } = useAuth();
 
@@ -41,7 +41,7 @@ export default function DiagnosticCentrePage() {
   useEffect(() => {
     async function fetchTests() {
       try {
-        const res = await fetch("http://localhost:5000/api/tests");
+        const res = await fetch("http://localhost:5001/api/tests");
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) setAllTests(data);
       } catch (err) {}
@@ -64,23 +64,31 @@ export default function DiagnosticCentrePage() {
     setIsSubmitting(true);
     const submissionData = {
       ...dataToSubmit,
+      prescription: undefined, // Don't include file in the JSON data string
       selectedTests: selectedTestsList.map(code => {
         const test = allTests.find(t => t.code === code);
         return `${test?.code}: ${test?.name}`;
       }).join(", "),
       type: "Home Collection Request",
-      userEmail: user?.email
+      userEmail: user?.email,
+      userPhone: user?.phone
     };
+    
+    const formData = new FormData();
+    formData.append('bookingData', JSON.stringify(submissionData));
+    if (dataToSubmit.prescription) {
+      formData.append('prescription', dataToSubmit.prescription);
+    }
+    
     try {
-      const res = await fetch("http://localhost:5000/api/submit", {
+      const res = await fetch("http://localhost:5001/api/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(submissionData),
+        body: formData,
       });
       if ((await res.json()).success) {
         alert("Home collection requested successfully! Our team will contact you.");
         setIsHomeCollectionOpen(false);
-        setCollectionForm({ name: user?.name || "", phone: user?.phone || "", age: "", gender: "Male", address: "", date: "", timeSlot: "07:00 AM - 09:00 AM", notes: "", referralDoctor: "" });
+        setCollectionForm({ name: user?.name || "", phone: user?.phone || "", age: "", gender: "Male", address: "", date: "", timeSlot: "07:00 AM - 09:00 AM", notes: "", referralDoctor: "", prescription: null });
         setSelectedTests([]);
       }
     } catch (error) { alert("Error sending request."); }
@@ -262,7 +270,7 @@ export default function DiagnosticCentrePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2.5">
                     <label className="text-[11px] uppercase tracking-widest font-bold text-[#0a3f41] ml-1">Phone</label>
-                    <input required value={collectionForm.phone} onChange={e => setCollectionForm({...collectionForm, phone: e.target.value})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" placeholder="Contact number" />
+                    <input required type="tel" maxLength={10} pattern="[0-9]{10}" value={collectionForm.phone} onChange={e => setCollectionForm({...collectionForm, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" placeholder="Contact number (10 digits)" />
                   </div>
                   <div className="space-y-2.5">
                     <label className="text-[11px] uppercase tracking-widest font-bold text-[#0a3f41] ml-1">Preferred Date</label>
@@ -274,9 +282,15 @@ export default function DiagnosticCentrePage() {
                   <textarea required value={collectionForm.address} onChange={e => setCollectionForm({...collectionForm, address: e.target.value})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" rows={3} placeholder="House number, street, landmark..." />
                 </div>
 
-                <div className="space-y-2.5">
-                  <label className="text-[11px] uppercase tracking-widest font-bold text-[#0a3f41] ml-1">Referral Doctor's Name</label>
-                  <input value={collectionForm.referralDoctor} onChange={e => setCollectionForm({...collectionForm, referralDoctor: e.target.value})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" placeholder="Dr. Name (Optional)" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2.5">
+                    <label className="text-[11px] uppercase tracking-widest font-bold text-[#0a3f41] ml-1">Referral Doctor's Name</label>
+                    <input value={collectionForm.referralDoctor} onChange={e => setCollectionForm({...collectionForm, referralDoctor: e.target.value})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" placeholder="Dr. Name (Optional)" />
+                  </div>
+                  <div className="space-y-2.5">
+                    <label className="text-[11px] uppercase tracking-widest font-bold text-[#0a3f41] ml-1">Upload Prescription (Optional)</label>
+                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={e => setCollectionForm({...collectionForm, prescription: e.target.files?.[0] || null})} className="w-full px-5 py-3.5 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[#5adace]/20 file:text-[#0a3f41] hover:file:bg-[#5adace]/30" />
+                  </div>
                 </div>
                 
                 <div className="p-6 bg-[#e8ecec]/50 rounded-[2rem] border border-[#6b8c8c]/20 space-y-4">

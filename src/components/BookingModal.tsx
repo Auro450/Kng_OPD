@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import { getApiBaseUrl } from "@/utils/apiConfig";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -47,7 +48,7 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
         setFormData(prev => ({ ...prev, doctor: defaultDoctor }));
       }
       // Fetch doctors
-      fetch("http://localhost:5000/api/doctors")
+      fetch(`${getApiBaseUrl()}/api/doctors`)
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) {
@@ -67,10 +68,10 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
   const submitBooking = async (dataToSubmit: any) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch("http://localhost:5000/api/submit", {
+      const response = await fetch("http://localhost:5001/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...dataToSubmit, userEmail: user?.email }),
+        body: JSON.stringify({ ...dataToSubmit, userEmail: user?.email, userPhone: user?.phone }),
       });
 
       const result = await response.json();
@@ -165,7 +166,7 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="font-label-sm text-label-sm text-on-surface-variant ml-2 uppercase tracking-widest font-bold">Phone Number</label>
-                <input required maxLength={10} pattern="[0-9]{10}" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value.replace(/\D/g, '')})} className="w-full p-5 rounded-2xl bg-surface-container border border-outline-variant text-gray-900 outline-none focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Contact number" type="tel" />
+                <input required maxLength={10} pattern="[0-9]{10}" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})} className="w-full p-5 rounded-2xl bg-surface-container border border-outline-variant text-gray-900 outline-none focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Contact number (10 digits)" type="tel" />
               </div>
               <div className="space-y-2">
                 <label className="font-label-sm text-label-sm text-on-surface-variant ml-2 uppercase tracking-widest font-bold">Doctor to Visit</label>

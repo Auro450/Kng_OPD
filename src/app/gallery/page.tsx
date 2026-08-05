@@ -6,12 +6,14 @@ import { Navbar } from "@/components/Navbar";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Footer } from "@/components/Footer";
 import { BookingModal } from "@/components/BookingModal";
+import { getApiBaseUrl } from "@/utils/apiConfig";
 
 interface GalleryItem {
   id?: string;
   title: string;
   description?: string;
-  src: string;
+  src?: string;
+  imageurl?: string;
 }
 
 export default function GalleryPage() {
@@ -22,7 +24,7 @@ export default function GalleryPage() {
   useEffect(() => {
     const fetchGallery = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/gallery");
+        const res = await fetch(`${getApiBaseUrl()}/api/gallery`);
         const data = await res.json();
         if (Array.isArray(data)) {
           setGalleryItems(data);
@@ -52,14 +54,21 @@ export default function GalleryPage() {
           </header>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-            {galleryItems.map((item, idx) => (
-              <div key={idx} className="group">
-                <div className="aspect-[16/10] rounded-[3rem] overflow-hidden mb-8 border border-outline-variant/30 shadow-sm group-hover:shadow-elevation-2 transition-all">
-                  <Image width={800} height={500} src={item.src} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
+            {galleryItems.map((item, idx) => {
+              const rawSrc = item.src || item.imageurl || "";
+              const fullSrc = rawSrc.startsWith("http") ? rawSrc : `${getApiBaseUrl()}${rawSrc}`;
+              return (
+                <div key={idx} className="group">
+                  <div className="aspect-[16/10] rounded-[3rem] overflow-hidden mb-8 border border-outline-variant/30 shadow-sm group-hover:shadow-elevation-2 transition-all bg-gray-100 relative">
+                    <img src={fullSrc} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000" />
+                  </div>
+                  <h3 className="font-headline-md text-headline-md mt-6 ml-4 group-hover:text-primary transition-colors font-bold">{item.title}</h3>
+                  {item.description && (
+                    <p className="text-body-md text-on-surface-variant ml-4 mt-1 font-medium">{item.description}</p>
+                  )}
                 </div>
-                <h3 className="font-headline-md text-headline-md mt-8 ml-4 group-hover:text-primary transition-colors">{item.title}</h3>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

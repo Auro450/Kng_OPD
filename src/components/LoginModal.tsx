@@ -32,7 +32,7 @@ export function LoginModal() {
       const decoded: any = jwtDecode(credentialResponse.credential);
       
       // Check if user already exists
-      const res = await fetch(`http://localhost:5000/api/users?email=${encodeURIComponent(decoded.email)}`);
+      const res = await fetch(`http://localhost:5001/api/users?email=${encodeURIComponent(decoded.email)}`);
       const data = await res.json();
       
       if (data.success && data.user && data.user.phone) {
@@ -113,7 +113,7 @@ export function LoginModal() {
                   maxLength={10} 
                   pattern="[0-9]{10}" 
                   value={phone} 
-                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))} 
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))} 
                   className="w-full p-5 rounded-2xl bg-surface-container border border-outline-variant text-gray-900 outline-none focus:ring-2 focus:ring-primary/20 transition-all" 
                   placeholder="10-digit mobile number" 
                   type="tel" 

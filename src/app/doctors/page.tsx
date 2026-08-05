@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { BookingModal } from "@/components/BookingModal";
 import { useAuth } from "@/context/AuthContext";
 import { formatAvailability } from "@/utils/formatAvailability";
+import { getApiBaseUrl } from "@/utils/apiConfig";
 
 interface Doctor {
   name: string;
@@ -20,26 +21,29 @@ interface Doctor {
   useDummyRating?: boolean;
 }
 
-const FeaturedReviewSlider = ({ reviews }: { reviews: any[] }) => {
+const CompactReviewSlider = ({ reviews }: { reviews: any[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     if (reviews.length <= 1) return;
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % reviews.length);
-    }, 4000);
+    }, 5000);
     return () => clearInterval(interval);
   }, [reviews]);
 
   if (reviews.length === 0) return null;
 
   return (
-    <div className="bg-orange-50 border border-orange-100/50 rounded-2xl p-4 flex items-center min-h-[90px] shadow-sm relative overflow-hidden mt-4 w-full">
-      <div className="flex w-full transition-transform duration-700 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
+    <div className="mt-4 rounded-2xl p-4 bg-primary/5 border border-primary/10 relative overflow-hidden h-[120px]">
+      <div className="flex h-full w-full transition-transform duration-700 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
         {reviews.map((review, idx) => (
-          <div key={idx} className="w-full flex-shrink-0 flex flex-col justify-center px-2">
-            <p className="text-[26px] text-orange-900/90 italic text-center line-clamp-3 leading-relaxed font-bold">"{review.text}"</p>
-            <p className="text-[22px] font-bold text-orange-600 text-center mt-3 uppercase tracking-widest">- {review.patientName}</p>
+          <div key={idx} className="w-full h-full flex-shrink-0 flex flex-col justify-center px-2">
+            <div className="flex justify-center mb-1">
+              {[1,2,3,4,5].map(s => <span key={s} className="material-symbols-outlined text-[10px] text-orange-400">{s <= review.rating ? "star" : ""}</span>)}
+            </div>
+            <p className="text-xs text-on-surface-variant italic text-center line-clamp-3 leading-relaxed">"{review.text}"</p>
+            <p className="text-[10px] font-bold text-primary text-center mt-2 uppercase tracking-wider">- {review.patientName}</p>
           </div>
         ))}
       </div>
@@ -57,7 +61,7 @@ export default function DoctorsPage() {
   useEffect(() => {
     async function fetchDoctors() {
       try {
-        const res = await fetch("http://localhost:5000/api/doctors");
+        const res = await fetch(`${getApiBaseUrl()}/api/doctors`);
         const data = await res.json();
         if (Array.isArray(data)) {
           setDoctors(data);
@@ -66,7 +70,7 @@ export default function DoctorsPage() {
     }
     async function fetchReviews() {
       try {
-        const res = await fetch("http://localhost:5000/api/reviews");
+        const res = await fetch(`${getApiBaseUrl()}/api/reviews`);
         const data = await res.json();
         if (data.success) {
           setReviews(data.reviews);
@@ -154,50 +158,71 @@ export default function DoctorsPage() {
 
         {/* ── Section 3: Doctor Directory ── */}
         <section className="py-24 px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+          <div className="flex flex-col max-w-5xl mx-auto gap-8">
             {doctors.map((doc, idx) => (
-              <div key={idx} className="bg-white dark:bg-surface-container-low rounded-[3rem] p-10 flex flex-col md:flex-row gap-10 border border-outline-variant/30 shadow-sm hover:shadow-elevation-2 transition-all group">
-                <div className="flex flex-col flex-shrink-0 md:w-56">
-                  <div className="h-72 rounded-[2.5rem] overflow-hidden">
-                    <img src={doc.imageurl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" alt={doc.name} />
+              <div key={idx} className="bg-white dark:bg-surface-container-low rounded-[2rem] p-6 md:p-10 flex flex-col md:flex-row gap-8 md:gap-12 border border-outline-variant/30 shadow-md hover:shadow-lg transition-all duration-500 group relative overflow-hidden">
+                {/* Accent Line */}
+                <div className="absolute left-0 top-0 w-2 h-full bg-[#5adace] opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+                {/* Left Side: Image & Reviews */}
+                <div className="flex flex-col flex-shrink-0 w-full md:w-[280px]">
+                  <div className="h-[320px] rounded-[1.5rem] overflow-hidden relative shadow-inner">
+                    <img
+                      src={doc.imageurl ? (doc.imageurl.startsWith("http") ? doc.imageurl : `${getApiBaseUrl()}${doc.imageurl}`) : ""}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                      alt={doc.name}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                   </div>
-                  <FeaturedReviewSlider reviews={reviews.filter(r => r.doctorName === doc.name && r.featured && r.text)} />
+                  <CompactReviewSlider reviews={reviews.filter(r => r.doctorName && r.doctorName.trim().toLowerCase() === doc.name.trim().toLowerCase() && r.featured && r.text)} />
                 </div>
-                <div className="flex flex-col">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="font-headline-md text-headline-md font-bold">{doc.name}</h3>
-                      <p className="text-primary font-bold font-label-md">{doc.specialty}</p>
+
+                {/* Right Side: Doctor Details */}
+                <div className="flex flex-col flex-1 py-2">
+                  <div className="flex justify-between items-start mb-6">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex flex-wrap items-center gap-4">
+                        <h3 className="font-headline-lg text-3xl font-black text-[#0a3f41]">{doc.name}</h3>
+                        {getDoctorAverageRating(doc.name, doc) && (
+                          <span className="flex items-center text-sm font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-lg border border-orange-200 shadow-sm">
+                            {getDoctorAverageRating(doc.name, doc)} <span className="material-symbols-outlined text-[16px] ml-1">star</span>
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[#0a3f41]/80 font-extrabold tracking-wide uppercase text-sm">{doc.specialty}</p>
                     </div>
-                    <div className="flex gap-2 flex-col items-end">
-                      {doc.experience && (
-                        <span className="bg-primary/10 text-primary px-4 py-1.5 rounded-full text-xs font-bold whitespace-nowrap">
-                          {doc.experience} EXP
-                        </span>
-                      )}
-                      {getDoctorAverageRating(doc.name, doc) && (
-                        <span className="bg-orange-50 text-orange-500 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap flex items-center border border-orange-100 shadow-sm">
-                          {getDoctorAverageRating(doc.name, doc)} <span className="material-symbols-outlined text-[14px] ml-1">star</span>
-                        </span>
-                      )}
+                    {doc.experience && (
+                      <span className="bg-[#0a3f41]/5 text-[#0a3f41] px-4 py-2 rounded-xl text-sm font-bold border border-[#0a3f41]/10 flex items-center gap-2 whitespace-nowrap">
+                        <span className="material-symbols-outlined text-[18px]">workspace_premium</span>
+                        {doc.experience} EXP
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div className="w-full h-px bg-gradient-to-r from-outline-variant/50 to-transparent my-4"></div>
+
+                  <div className="text-on-surface-variant font-body-lg mb-8 flex-grow leading-relaxed flex flex-col gap-4">
+                    <div className="flex items-start gap-3">
+                      <span className="material-symbols-outlined text-[#5adace] mt-1 shrink-0">event_available</span>
+                      <p>{formatAvailability(doc)}</p>
                     </div>
                   </div>
-                  <p className="text-on-surface-variant font-body-md mb-8 flex-grow leading-relaxed">
-                    {formatAvailability(doc)}
-                  </p>
-                  <button 
-                    onClick={() => {
-                      if (!user) {
-                        openLoginModal();
-                      } else {
-                        setSelectedDoctor(doc.name);
-                        setIsModalOpen(true);
-                      }
-                    }}
-                    className="mt-auto bg-[#06474e] text-white hover:bg-[#053b41] py-4 px-8 rounded-2xl font-bold font-label-lg transition-all flex items-center justify-center gap-2"
-                  >
-                    Book Appointment <span className="material-symbols-outlined text-xl">event_available</span>
-                  </button>
+
+                  <div className="mt-auto pt-6 border-t border-outline-variant/20 flex items-center justify-end">
+                    <button 
+                      onClick={() => {
+                        if (!user) {
+                          openLoginModal();
+                        } else {
+                          setSelectedDoctor(doc.name);
+                          setIsModalOpen(true);
+                        }
+                      }}
+                      className="bg-[#06474e] text-white hover:bg-[#5adace] hover:text-[#06474e] py-4 px-10 rounded-2xl font-black text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-md hover:shadow-xl hover:-translate-y-1 w-full md:w-auto"
+                    >
+                      Book Appointment <span className="material-symbols-outlined">arrow_forward</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
