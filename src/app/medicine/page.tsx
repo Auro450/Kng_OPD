@@ -33,10 +33,11 @@ export default function MedicinePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [patientDetails, setPatientDetails] = useState({ name: "", phone: "", address: "" });
+  const [patientDetails, setPatientDetails] = useState<{name: string, phone: string, address: string, streetNo: string, buildingNo: string, landmark: string, pincode: string, lat: number | null, lon: number | null}>({ name: "", phone: "", address: "", streetNo: "", buildingNo: "", landmark: "", pincode: "", lat: null, lon: null });
   const [couponCode, setCouponCode] = useState("");
   const [discount, setDiscount] = useState(0);
   const [couponMsg, setCouponMsg] = useState({ type: "", text: "" });
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
 
   useEffect(() => {
     fetchMedicines();
@@ -98,11 +99,10 @@ export default function MedicinePage() {
   const updateQuantity = (id: string, delta: number) => {
     setCart(prev => prev.map(item => {
       if (item.id === id) {
-        const newQ = item.quantity + delta;
-        return newQ > 0 ? { ...item, quantity: newQ } : item;
+        return { ...item, quantity: item.quantity + delta };
       }
       return item;
-    }));
+    }).filter(item => item.quantity > 0));
   };
 
   const cartTotalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
@@ -119,6 +119,40 @@ export default function MedicinePage() {
   }, [cartTotalPrice]);
 
   const [prescriptionFile, setPrescriptionFile] = useState<File | null>(null);
+
+  const handleUpdateLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    setIsFetchingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+          const data = await res.json();
+          if (data && data.display_name) {
+            setPatientDetails(prev => ({ ...prev, address: data.display_name, lat: latitude, lon: longitude }));
+          } else {
+            alert("Could not fetch address for this location.");
+          }
+        } catch (error) {
+          console.error("Error fetching location:", error);
+          alert("Error fetching address.");
+        } finally {
+          setIsFetchingLocation(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        alert("Failed to get your location. Please check permissions.");
+        setIsFetchingLocation(false);
+      },
+      { enableHighAccuracy: true }
+    );
+  };
 
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
@@ -221,7 +255,7 @@ export default function MedicinePage() {
         alert(`Order placed successfully!\nName: ${patientDetails.name}\nTotal Paid: ₹${finalTotal.toFixed(2)}`);
         setCart([]);
         setIsCartOpen(false);
-        setPatientDetails({ name: "", phone: "", address: "" });
+        setPatientDetails({ name: "", phone: "", address: "", streetNo: "", buildingNo: "", landmark: "", pincode: "", lat: null, lon: null });
         setPrescriptionFile(null);
         setCouponCode("");
         setDiscount(0);
@@ -320,6 +354,18 @@ export default function MedicinePage() {
                         <span className="material-symbols-outlined text-sm">do_not_disturb_on</span>
                         Sold Out
                       </button>
+                    ) : cart.find(item => item.id === med.id) ? (
+                      <div className="w-full py-2 rounded-xl bg-[#e8ecec] border border-[#0a3f41]/10 flex items-center justify-between px-4 shadow-sm">
+                        <button onClick={() => updateQuantity(med.id, -1)} className="w-8 h-8 flex items-center justify-center text-[#0a3f41] bg-white rounded-md shadow-sm hover:bg-gray-50 transition-colors">
+                          <span className="material-symbols-outlined text-sm">remove</span>
+                        </button>
+                        <span className="text-base font-bold text-[#0a3f41]">
+                          {cart.find(item => item.id === med.id)?.quantity}
+                        </span>
+                        <button onClick={() => updateQuantity(med.id, 1)} className="w-8 h-8 flex items-center justify-center text-[#0a3f41] bg-white rounded-md shadow-sm hover:bg-gray-50 transition-colors">
+                          <span className="material-symbols-outlined text-sm">add</span>
+                        </button>
+                      </div>
                     ) : (
                       <button
                         id={`add-btn-${med.id}`}
@@ -417,7 +463,42 @@ export default function MedicinePage() {
                   <h3 className="font-bold text-[#0a3f41] text-sm">Delivery Details</h3>
                   <input type="text" placeholder="Full Name" value={patientDetails.name} onChange={e => setPatientDetails({...patientDetails, name: e.target.value})} className="w-full p-2 bg-[#f8f9f9] text-[#0a3f41] border border-[#e8ecec] rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#5adace]" />
                   <input type="tel" maxLength={10} pattern="[0-9]{10}" placeholder="Phone Number (10 digits)" value={patientDetails.phone} onChange={e => setPatientDetails({...patientDetails, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})} className="w-full p-2 bg-[#f8f9f9] text-[#0a3f41] border border-[#e8ecec] rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#5adace]" />
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <input type="text" placeholder="Street No." value={patientDetails.streetNo} onChange={e => setPatientDetails({...patientDetails, streetNo: e.target.value})} className="w-full p-2 bg-[#f8f9f9] text-[#0a3f41] border border-[#e8ecec] rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#5adace]" />
+                    <input type="text" placeholder="Building No." value={patientDetails.buildingNo} onChange={e => setPatientDetails({...patientDetails, buildingNo: e.target.value})} className="w-full p-2 bg-[#f8f9f9] text-[#0a3f41] border border-[#e8ecec] rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#5adace]" />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2">
+                    <input type="text" placeholder="Landmark" value={patientDetails.landmark} onChange={e => setPatientDetails({...patientDetails, landmark: e.target.value})} className="w-full p-2 bg-[#f8f9f9] text-[#0a3f41] border border-[#e8ecec] rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#5adace]" />
+                    <input type="text" placeholder="Pincode" value={patientDetails.pincode} onChange={e => setPatientDetails({...patientDetails, pincode: e.target.value.replace(/\D/g, '').slice(0, 6)})} className="w-full p-2 bg-[#f8f9f9] text-[#0a3f41] border border-[#e8ecec] rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#5adace]" />
+                  </div>
+
                   <textarea placeholder="Delivery Address" value={patientDetails.address} onChange={e => setPatientDetails({...patientDetails, address: e.target.value})} className="w-full p-2 bg-[#f8f9f9] text-[#0a3f41] border border-[#e8ecec] rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#5adace] resize-none h-16"></textarea>
+                  
+                  <button
+                    onClick={handleUpdateLocation}
+                    disabled={isFetchingLocation}
+                    className="flex items-center justify-center gap-1.5 w-full py-2 bg-[#e8ecec] hover:bg-[#d4dede] text-[#0a3f41] rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">
+                      {isFetchingLocation ? 'hourglass_empty' : 'my_location'}
+                    </span>
+                    {isFetchingLocation ? 'Detecting Location...' : 'Update Current Location'}
+                  </button>
+
+                  {patientDetails.lat && patientDetails.lon && (
+                    <div className="w-full h-40 rounded-lg overflow-hidden border border-[#e8ecec] mt-1">
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        loading="lazy"
+                        allowFullScreen
+                        src={`https://maps.google.com/maps?q=${patientDetails.lat},${patientDetails.lon}&z=16&output=embed`}
+                      ></iframe>
+                    </div>
+                  )}
                 </div>
 
                 {/* Optional Prescription Upload */}

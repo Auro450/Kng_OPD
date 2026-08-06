@@ -7,10 +7,10 @@ import { useAuth } from "@/context/AuthContext";
 import { NotificationBell } from "./NotificationBell";
 
 interface NavbarProps {
-  onOpenModal: () => void;
+  onOpenModal?: () => void;
 }
 
-export function Navbar({ onOpenModal }: NavbarProps) {
+export function Navbar({ onOpenModal }: NavbarProps = {}) {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState<string>("");
   const { user, openProfileModal, openLoginModal } = useAuth();

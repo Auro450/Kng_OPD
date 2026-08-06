@@ -2521,6 +2521,7 @@ export default function AdminDashboardPage() {
                   <tr>
                     <th className="px-6 py-4 font-semibold">Order ID & Date</th>
                     <th className="px-6 py-4 font-semibold">Patient Details</th>
+                    <th className="px-6 py-4 font-semibold">Delivery Address</th>
                     <th className="px-6 py-4 font-semibold">Medicines Ordered</th>
                     <th className="px-6 py-4 font-semibold">Total Paid</th>
                     <th className="px-6 py-4 font-semibold">Status</th>
@@ -2580,7 +2581,21 @@ export default function AdminDashboardPage() {
                           <td className="px-6 py-4 align-top text-sm text-[#0a3f41]">
                             <p className="font-medium">{order.patientDetails?.name}</p>
                             <p className="text-[#6b8c8c]">{order.patientDetails?.phone}</p>
-                            <p className="text-[#6b8c8c] text-xs max-w-[150px] truncate">{order.patientDetails?.address}</p>
+                          </td>
+                          <td className="px-6 py-4 align-top text-sm text-[#0a3f41]">
+                            <div className="flex flex-col gap-0.5">
+                              {order.patientDetails?.address && <p className="text-[#6b8c8c] text-xs max-w-[150px] truncate" title={order.patientDetails.address}>{order.patientDetails.address}</p>}
+                              {order.patientDetails?.streetNo && <p className="text-[#6b8c8c] text-xs">St: {order.patientDetails.streetNo}</p>}
+                              {order.patientDetails?.buildingNo && <p className="text-[#6b8c8c] text-xs">Bldg: {order.patientDetails.buildingNo}</p>}
+                              {order.patientDetails?.landmark && <p className="text-[#6b8c8c] text-xs">Landmark: {order.patientDetails.landmark}</p>}
+                              {order.patientDetails?.pincode && <p className="text-[#6b8c8c] text-xs">PIN: {order.patientDetails.pincode}</p>}
+                              {!order.patientDetails?.address && !order.patientDetails?.streetNo && <p className="text-[#6b8c8c] text-xs italic">N/A</p>}
+                              {order.patientDetails?.lat && order.patientDetails?.lon && (
+                                <a href={`https://maps.google.com/?q=${order.patientDetails.lat},${order.patientDetails.lon}`} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline text-xs font-bold flex items-center gap-0.5 mt-1">
+                                  <span className="material-symbols-outlined text-[14px]">location_on</span> View Map
+                                </a>
+                              )}
+                            </div>
                           </td>
                           <td className="px-6 py-4 align-top">
                             <ul className="text-sm text-[#6b8c8c]">
@@ -3552,6 +3567,7 @@ export default function AdminDashboardPage() {
                       <>
                         <th className="p-5 font-bold uppercase tracking-widest text-xs">Doctor to Visit</th>
                         <th className="p-5 font-bold uppercase tracking-widest text-xs">Reason for Visit</th>
+                        <th className="p-5 font-bold uppercase tracking-widest text-xs">Transaction ID</th>
                       </>
                     ) : (
                       <>
@@ -3627,11 +3643,33 @@ export default function AdminDashboardPage() {
                             <td className="p-5 text-[#6b8c8c] max-w-xs truncate" title={booking.reason}>
                               {booking.reason}
                             </td>
+                            <td className="p-5">
+                              {booking.razorpayPaymentId ? (
+                                <div className="flex items-center gap-1 bg-green-100 text-green-800 px-2 py-1 rounded border border-green-300 w-max">
+                                  <span className="material-symbols-outlined text-[14px]">verified</span>
+                                  <span className="text-xs font-bold">PAID (Auto-Verified)</span>
+                                </div>
+                              ) : (
+                                <span className="text-xs text-[#6b8c8c] italic">Unpaid</span>
+                              )}
+                            </td>
                           </>
                         ) : (
                           <>
-                            <td className="p-5 text-[#6b8c8c] max-w-[200px]">
-                              <p className="line-clamp-2" title={booking.address}>{booking.address}</p>
+                            <td className="p-5 text-[#6b8c8c] max-w-[200px] align-top">
+                              <div className="flex flex-col gap-0.5">
+                                {booking.address && <p className="line-clamp-2 text-xs" title={booking.address}>{booking.address}</p>}
+                                {booking.streetNo && <p className="text-xs">St: {booking.streetNo}</p>}
+                                {booking.buildingNo && <p className="text-xs">Bldg: {booking.buildingNo}</p>}
+                                {booking.landmark && <p className="text-xs">Landmark: {booking.landmark}</p>}
+                                {booking.pincode && <p className="text-xs">PIN: {booking.pincode}</p>}
+                                {!booking.address && !booking.streetNo && <p className="text-xs italic">N/A</p>}
+                                {booking.lat && booking.lon && (
+                                  <a href={`https://maps.google.com/?q=${booking.lat},${booking.lon}`} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline text-xs font-bold flex items-center gap-0.5 mt-1 w-max">
+                                    <span className="material-symbols-outlined text-[14px]">location_on</span> View Map
+                                  </a>
+                                )}
+                              </div>
                             </td>
                             <td className="p-5">
                               {editingTestsBookingId === booking.id ? (
@@ -3863,6 +3901,7 @@ export default function AdminDashboardPage() {
                   <tr>
                     <th className="p-4">Order ID & Date</th>
                     <th className="p-4">Patient Details</th>
+                    <th className="p-4">Delivery Address</th>
                     <th className="p-4">Medicines</th>
                     <th className="p-4">Total Paid</th>
                     <th className="p-4 text-right">Actions</th>
@@ -3885,7 +3924,21 @@ export default function AdminDashboardPage() {
                         <td className="p-4 align-top text-sm text-[#0a3f41]">
                           <p className="font-bold">{order.patientDetails?.name}</p>
                           <p className="text-[#6b8c8c] text-xs">{order.patientDetails?.phone}</p>
-                          <p className="text-[#6b8c8c] text-xs max-w-[160px] truncate">{order.patientDetails?.address}</p>
+                        </td>
+                        <td className="p-4 align-top text-sm text-[#0a3f41]">
+                          <div className="flex flex-col gap-0.5">
+                            {order.patientDetails?.address && <p className="text-[#6b8c8c] text-xs max-w-[160px] truncate" title={order.patientDetails.address}>{order.patientDetails.address}</p>}
+                            {order.patientDetails?.streetNo && <p className="text-[#6b8c8c] text-xs">St: {order.patientDetails.streetNo}</p>}
+                            {order.patientDetails?.buildingNo && <p className="text-[#6b8c8c] text-xs">Bldg: {order.patientDetails.buildingNo}</p>}
+                            {order.patientDetails?.landmark && <p className="text-[#6b8c8c] text-xs">Landmark: {order.patientDetails.landmark}</p>}
+                            {order.patientDetails?.pincode && <p className="text-[#6b8c8c] text-xs">PIN: {order.patientDetails.pincode}</p>}
+                            {!order.patientDetails?.address && !order.patientDetails?.streetNo && <p className="text-[#6b8c8c] text-xs italic">N/A</p>}
+                            {order.patientDetails?.lat && order.patientDetails?.lon && (
+                              <a href={`https://maps.google.com/?q=${order.patientDetails.lat},${order.patientDetails.lon}`} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline text-xs font-bold flex items-center gap-0.5 mt-1">
+                                <span className="material-symbols-outlined text-[14px]">location_on</span> View Map
+                              </a>
+                            )}
+                          </div>
                         </td>
                         <td className="p-4 align-top text-xs text-[#6b8c8c]">
                           <ul className="space-y-0.5">

@@ -25,8 +25,9 @@ export default function DiagnosticCentrePage() {
   const [selectedTests, setSelectedTests] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [collectionForm, setCollectionForm] = useState({
-    name: "", phone: "", age: "", gender: "Male", address: "", date: "", timeSlot: "07:00 AM - 09:00 AM", notes: "", referralDoctor: "", prescription: null as File | null
+    name: "", phone: "", age: "", gender: "Male", address: "", streetNo: "", buildingNo: "", landmark: "", pincode: "", lat: null as number | null, lon: null as number | null, date: "", timeSlot: "07:00 AM - 09:00 AM", notes: "", referralDoctor: "", prescription: null as File | null
   });
+  const [isFetchingLocation, setIsFetchingLocation] = useState(false);
   const { user, openLoginModal } = useAuth();
 
 
@@ -36,6 +37,40 @@ export default function DiagnosticCentrePage() {
     } else {
       setIsHomeCollectionOpen(true);
     }
+  };
+
+  const handleUpdateLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    setIsFetchingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+          const data = await res.json();
+          if (data && data.display_name) {
+            setCollectionForm(prev => ({ ...prev, address: data.display_name, lat: latitude, lon: longitude }));
+          } else {
+            alert("Could not fetch address for this location.");
+          }
+        } catch (error) {
+          console.error("Error fetching location:", error);
+          alert("Error fetching address.");
+        } finally {
+          setIsFetchingLocation(false);
+        }
+      },
+      (error) => {
+        console.error("Geolocation error:", error);
+        alert("Failed to get your location. Please check permissions.");
+        setIsFetchingLocation(false);
+      },
+      { enableHighAccuracy: true }
+    );
   };
 
   useEffect(() => {
@@ -88,7 +123,7 @@ export default function DiagnosticCentrePage() {
       if ((await res.json()).success) {
         alert("Home collection requested successfully! Our team will contact you.");
         setIsHomeCollectionOpen(false);
-        setCollectionForm({ name: user?.name || "", phone: user?.phone || "", age: "", gender: "Male", address: "", date: "", timeSlot: "07:00 AM - 09:00 AM", notes: "", referralDoctor: "", prescription: null });
+        setCollectionForm({ name: user?.name || "", phone: user?.phone || "", age: "", gender: "Male", address: "", streetNo: "", buildingNo: "", landmark: "", pincode: "", lat: null, lon: null, date: "", timeSlot: "07:00 AM - 09:00 AM", notes: "", referralDoctor: "", prescription: null });
         setSelectedTests([]);
       }
     } catch (error) { alert("Error sending request."); }
@@ -277,9 +312,44 @@ export default function DiagnosticCentrePage() {
                     <input required min={today} value={collectionForm.date} onChange={e => setCollectionForm({...collectionForm, date: e.target.value})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all" type="date" />
                   </div>
                 </div>
-                <div className="space-y-2.5">
+                <div className="space-y-4">
                   <label className="text-[11px] uppercase tracking-widest font-bold text-[#0a3f41] ml-1">Full Address</label>
+                  
+                  <div className="grid grid-cols-2 gap-4">
+                    <input type="text" placeholder="Street No." value={collectionForm.streetNo} onChange={e => setCollectionForm({...collectionForm, streetNo: e.target.value})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" />
+                    <input type="text" placeholder="Building No." value={collectionForm.buildingNo} onChange={e => setCollectionForm({...collectionForm, buildingNo: e.target.value})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <input type="text" placeholder="Landmark" value={collectionForm.landmark} onChange={e => setCollectionForm({...collectionForm, landmark: e.target.value})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" />
+                    <input type="text" placeholder="Pincode" value={collectionForm.pincode} onChange={e => setCollectionForm({...collectionForm, pincode: e.target.value.replace(/\D/g, '').slice(0, 6)})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" />
+                  </div>
+
                   <textarea required value={collectionForm.address} onChange={e => setCollectionForm({...collectionForm, address: e.target.value})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" rows={3} placeholder="House number, street, landmark..." />
+                  
+                  <button
+                    type="button"
+                    onClick={handleUpdateLocation}
+                    disabled={isFetchingLocation}
+                    className="flex items-center justify-center gap-2 w-full py-3 bg-[#e8ecec] hover:bg-[#d4dede] text-[#0a3f41] rounded-2xl text-sm font-bold transition-colors disabled:opacity-50"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">
+                      {isFetchingLocation ? 'hourglass_empty' : 'my_location'}
+                    </span>
+                    {isFetchingLocation ? 'Detecting Location...' : 'Update Current Location'}
+                  </button>
+
+                  {collectionForm.lat && collectionForm.lon && (
+                    <div className="w-full h-48 rounded-2xl overflow-hidden mt-2">
+                      <iframe
+                        width="100%"
+                        height="100%"
+                        style={{ border: 0 }}
+                        loading="lazy"
+                        allowFullScreen
+                        src={`https://maps.google.com/maps?q=${collectionForm.lat},${collectionForm.lon}&z=16&output=embed`}
+                      ></iframe>
+                    </div>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

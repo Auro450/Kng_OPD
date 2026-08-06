@@ -65,18 +65,88 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
   }, [isOpen, defaultDoctor]);
 
 
-  const submitBooking = async (dataToSubmit: any) => {
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handlePayment = async () => {
+    setIsSubmitting(true);
+    const res = await loadRazorpayScript();
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const orderResponse = await fetch("http://localhost:5001/api/create-order", { method: "POST" });
+      const orderData = await orderResponse.json();
+
+      if (!orderData.success) {
+        alert("Failed to create order");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const options = {
+        key: "rzp_test_TMcZxvkXaGAFoK",
+        amount: orderData.order.amount,
+        currency: orderData.order.currency,
+        name: "Ray's Medical",
+        description: "Booking Confirmation Fee",
+        order_id: orderData.order.id,
+        handler: async function (response: any) {
+          const verifyRes = await fetch("http://localhost:5001/api/verify-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(response)
+          });
+          const verifyData = await verifyRes.json();
+          if (verifyData.success) {
+            submitBooking(formData, response.razorpay_payment_id);
+          } else {
+            alert("Payment verification failed!");
+          }
+        },
+        prefill: {
+          name: formData.name,
+          email: user?.email || "",
+          contact: formData.phone
+        },
+        theme: { color: "#0a3f41" }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on("payment.failed", function (response: any) {
+        alert("Payment failed! Reason: " + response.error.description);
+      });
+      rzp.open();
+    } catch (err) {
+      console.error(err);
+      alert("Error initiating payment.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const submitBooking = async (dataToSubmit: any, razorpayPaymentId?: string) => {
     setIsSubmitting(true);
     try {
       const response = await fetch("http://localhost:5001/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...dataToSubmit, userEmail: user?.email, userPhone: user?.phone }),
+        body: JSON.stringify({ ...dataToSubmit, userEmail: user?.email, userPhone: user?.phone, razorpayPaymentId }),
       });
 
       const result = await response.json();
       if (result.success) {
-        alert("Booking request sent successfully! We will contact you shortly.");
+        alert("Booking request sent successfully and payment verified!");
         onClose();
         setFormData({
           name: user?.name || "", gender: "Male", phone: user?.phone || "", date: "", doctor: "Select a Doctor", reason: "Select Reason", type: "Clinic Appointment"
@@ -126,10 +196,10 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
     }
     
     if (!user) {
-      openLoginModal(() => submitBooking(formData));
+      openLoginModal(() => handlePayment());
       return;
     }
-    submitBooking(formData);
+    handlePayment();
   };
 
   if (!isOpen && !show) return null;
