@@ -95,7 +95,7 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
       }
 
       const options = {
-        key: "rzp_live_TN2NYyCgJVpg7x", // HARDCODED LIVE KEY
+        key: "rzp_live_TN3sscaEW0fMq4", // HARDCODED LIVE KEY
         amount: orderData.order.amount,
         currency: orderData.order.currency,
         name: "Ray's Medical",
