@@ -454,11 +454,9 @@ export default function MedicinePage() {
                   </div>
                 ))
               )}
-            </div>
-
-            {cart.length > 0 && (
-              <div className="p-6 border-t border-[#e8ecec] bg-gray-50 flex flex-col gap-4 shrink-0">
-                {/* Patient Details Form */}
+              {cart.length > 0 && (
+                <div className="pt-4 mt-6 border-t border-[#e8ecec] flex flex-col gap-4">
+                  {/* Patient Details Form */}
                 <div className="bg-white p-4 rounded-xl border border-[#e8ecec] shadow-sm flex flex-col gap-3">
                   <h3 className="font-bold text-[#0a3f41] text-sm">Delivery Details</h3>
                   <input type="text" placeholder="Full Name" value={patientDetails.name} onChange={e => setPatientDetails({...patientDetails, name: e.target.value})} className="w-full p-2 bg-[#f8f9f9] text-[#0a3f41] border border-[#e8ecec] rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-[#5adace]" />
@@ -565,11 +563,11 @@ export default function MedicinePage() {
                 </div>
 
               </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          {cart.length > 0 && (
-            <div className="p-6 border-t border-[#e8ecec] bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] shrink-0 z-10">
+            {cart.length > 0 && (
+              <div className="p-6 border-t border-[#e8ecec] bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] shrink-0 z-10">
               <div className="flex justify-between items-center mb-2 text-sm text-[#6b8c8c]">
                 <span>Subtotal</span>
                 <span>₹{cartTotalPrice.toFixed(2)}</span>
