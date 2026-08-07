@@ -123,7 +123,7 @@ export function ProfileModal() {
   const handleCancelBooking = async (id: string) => {
     if (!window.confirm("Are you sure you want to cancel this booking?")) return;
     try {
-      const res = await fetch(`http://localhost:5001/api/bookings?id=${id}`, { method: 'DELETE' });
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/bookings?id=${id}`, { method: 'DELETE' });
       const data = await res.json();
       if (data.success) {
         setBookings(bookings.filter(b => b.id !== id));

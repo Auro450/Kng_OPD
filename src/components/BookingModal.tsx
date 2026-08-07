@@ -85,7 +85,7 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
     }
 
     try {
-      const orderResponse = await fetch("http://localhost:5001/api/create-order", { method: "POST" });
+      const orderResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/create-order`, { method: "POST" });
       const orderData = await orderResponse.json();
 
       if (!orderData.success) {
@@ -102,7 +102,7 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
         description: "Booking Confirmation Fee",
         order_id: orderData.order.id,
         handler: async function (response: any) {
-          const verifyRes = await fetch("http://localhost:5001/api/verify-payment", {
+          const verifyRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/verify-payment`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(response)
@@ -138,7 +138,7 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
   const submitBooking = async (dataToSubmit: any, razorpayPaymentId?: string) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch("http://localhost:5001/api/submit", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...dataToSubmit, userEmail: user?.email, userPhone: user?.phone, razorpayPaymentId }),

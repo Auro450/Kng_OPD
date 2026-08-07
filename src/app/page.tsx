@@ -147,15 +147,15 @@ export default function Home() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const drRes = await fetch("http://localhost:5001/api/doctors");
+        const drRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/doctors`);
         const drData = await drRes.json();
         if (Array.isArray(drData) && drData.length > 0) setDoctors(drData);
         
-        const blogRes = await fetch("http://localhost:5001/api/blog");
+        const blogRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog`);
         const blogData = await blogRes.json();
         if (Array.isArray(blogData) && blogData.length > 0) setBlogs([...ORIGINAL_BLOGS, ...blogData]);
 
-        const reviewRes = await fetch("http://localhost:5001/api/reviews");
+        const reviewRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/reviews`);
         const reviewData = await reviewRes.json();
         if (reviewData.success) setReviews(reviewData.reviews);
       } catch (err) {}
@@ -178,7 +178,7 @@ export default function Home() {
   const submitBooking = async (dataToSubmit: any) => {
     setIsSubmitting(true);
     try {
-      const res = await fetch("http://localhost:5001/api/submit", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...dataToSubmit, userEmail: user?.email, userPhone: user?.phone }),

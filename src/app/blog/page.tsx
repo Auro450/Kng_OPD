@@ -18,7 +18,7 @@ export default function BlogPage() {
   useEffect(() => {
     async function fetchBlogs() {
       try {
-        const res = await fetch("http://localhost:5001/api/blog");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog`);
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) setBlogs([...ORIGINAL_BLOGS, ...data]);
       } catch (err) {}

@@ -76,7 +76,7 @@ export default function DiagnosticCentrePage() {
   useEffect(() => {
     async function fetchTests() {
       try {
-        const res = await fetch("http://localhost:5001/api/tests");
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tests`);
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) setAllTests(data);
       } catch (err) {}
@@ -116,7 +116,7 @@ export default function DiagnosticCentrePage() {
     }
     
     try {
-      const res = await fetch("http://localhost:5001/api/submit", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/submit`, {
         method: "POST",
         body: formData,
       });
