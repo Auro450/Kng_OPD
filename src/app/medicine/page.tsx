@@ -564,33 +564,35 @@ export default function MedicinePage() {
                   )}
                 </div>
 
-                {/* Totals & Checkout */}
-                <div>
-                  <div className="flex justify-between items-center mb-2 text-sm text-[#6b8c8c]">
-                    <span>Subtotal</span>
-                    <span>₹{cartTotalPrice.toFixed(2)}</span>
-                  </div>
-                  {discountAmount > 0 && (
-                    <div className="flex justify-between items-center mb-2 text-sm text-green-600">
-                      <span>Discount</span>
-                      <span>-₹{discountAmount.toFixed(2)}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between items-center mb-4 pt-2 border-t border-[#e8ecec]">
-                    <span className="text-lg font-bold text-[#6b8c8c]">Total</span>
-                    <span className="text-2xl font-black text-[#0a3f41]">₹{finalTotal.toFixed(2)}</span>
-                  </div>
-                  <button 
-                    onClick={handleCheckout}
-                    className="w-full py-4 bg-[#5adace] text-[#0a3f41] rounded-full font-bold text-lg hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-lg"
-                  >
-                    Place Order
-                    <span className="material-symbols-outlined">check_circle</span>
-                  </button>
-                </div>
               </div>
             )}
           </div>
+
+          {cart.length > 0 && (
+            <div className="p-6 border-t border-[#e8ecec] bg-white shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] shrink-0 z-10">
+              <div className="flex justify-between items-center mb-2 text-sm text-[#6b8c8c]">
+                <span>Subtotal</span>
+                <span>₹{cartTotalPrice.toFixed(2)}</span>
+              </div>
+              {discountAmount > 0 && (
+                <div className="flex justify-between items-center mb-2 text-sm text-green-600">
+                  <span>Discount</span>
+                  <span>-₹{discountAmount.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between items-center mb-4 pt-2 border-t border-[#e8ecec]">
+                <span className="text-lg font-bold text-[#6b8c8c]">Total</span>
+                <span className="text-2xl font-black text-[#0a3f41]">₹{finalTotal.toFixed(2)}</span>
+              </div>
+              <button 
+                onClick={handleCheckout}
+                className="w-full py-4 bg-[#5adace] text-[#0a3f41] rounded-full font-bold text-lg hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-lg"
+              >
+                Place Order
+                <span className="material-symbols-outlined">check_circle</span>
+              </button>
+            </div>
+          )}
         </div>
         )}
         <Footer />
