@@ -95,7 +95,7 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
       }
 
       const options = {
-        key: "rzp_test_TMcZxvkXaGAFoK",
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: orderData.order.amount,
         currency: orderData.order.currency,
         name: "Ray's Medical",
