@@ -18,7 +18,7 @@ export default function BlogPage() {
   useEffect(() => {
     async function fetchBlogs() {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/blog`);
+        const res = await fetch(`${"https://13-207-203-76.nip.io"}/api/blog`);
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) setBlogs([...ORIGINAL_BLOGS, ...data]);
       } catch (err) {}

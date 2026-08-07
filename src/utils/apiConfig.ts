@@ -1,3 +1,3 @@
 export const getApiBaseUrl = (): string => {
-  return process.env.NEXT_PUBLIC_API_URL || "http://localhost:5001";
+  return "https://13-207-203-76.nip.io" || "http://localhost:5001";
 };
