@@ -592,9 +592,10 @@ export default function MedicinePage() {
             </div>
           )}
         </div>
-        )}
-        <Footer />
       </div>
+      )}
+      <Footer />
+    </div>
     </>
   );
 }
