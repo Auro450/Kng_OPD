@@ -16,7 +16,7 @@ export default function AdminDashboardPage() {
   const [editingBookingId, setEditingBookingId] = useState<string | null>(null);
   const [editingDate, setEditingDate] = useState<string>("");
   const [editingDoctorId, setEditingDoctorId] = useState<string | null>(null);
-  const [newDoctorForm, setNewDoctorForm] = useState<{ name: string, specialty: string, description: string, experience: string, image: File | null, availableDays: number[], availableWeeks: number[], dummyRating: string, useDummyRating: boolean, exceptions: { date: string, isAvailable: boolean }[] }>({ name: "", specialty: "", description: "", experience: "", image: null, availableDays: [], availableWeeks: [], dummyRating: "", useDummyRating: false, exceptions: [] });
+  const [newDoctorForm, setNewDoctorForm] = useState<{ name: string, specialty: string, description: string, experience: string, image: File | null, availableDays: number[], availableWeeks: number[], dummyRating: string, useDummyRating: boolean }>({ name: "", specialty: "", description: "", experience: "", image: null, availableDays: [], availableWeeks: [], dummyRating: "", useDummyRating: false });
   const [allTests, setAllTests] = useState<any[]>([]);
   const [editingTestId, setEditingTestId] = useState<string | null>(null);
   const [newTestForm, setNewTestForm] = useState<{ name: string, code: string }>({ name: "", code: "" });
@@ -661,7 +661,6 @@ export default function AdminDashboardPage() {
       formData.append("experience", newDoctorForm.experience);
       formData.append("availableDays", JSON.stringify(newDoctorForm.availableDays));
       formData.append("availableWeeks", JSON.stringify(newDoctorForm.availableWeeks));
-      formData.append("exceptions", JSON.stringify(newDoctorForm.exceptions));
       if (newDoctorForm.image) {
         formData.append("image", newDoctorForm.image);
       }
@@ -682,7 +681,7 @@ export default function AdminDashboardPage() {
           setAllDoctors([data.doctor, ...allDoctors]);
           alert("Doctor added successfully!");
         }
-        setNewDoctorForm({ name: "", specialty: "", description: "", experience: "", image: null, availableDays: [], availableWeeks: [], dummyRating: "", useDummyRating: false, exceptions: [] });
+        setNewDoctorForm({ name: "", specialty: "", description: "", experience: "", image: null, availableDays: [], availableWeeks: [], dummyRating: "", useDummyRating: false });
         setEditingDoctorId(null);
       } else {
         alert(data.message || `Failed to ${editingDoctorId ? 'update' : 'add'} doctor`);
@@ -705,8 +704,7 @@ export default function AdminDashboardPage() {
       availableDays: doc.availableDays || [],
       availableWeeks: doc.availableWeeks || [],
       dummyRating: doc.dummyRating || "",
-      useDummyRating: doc.useDummyRating || false,
-      exceptions: doc.exceptions || []
+      useDummyRating: doc.useDummyRating || false
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -733,6 +731,31 @@ export default function AdminDashboardPage() {
     } catch (e) {
       console.error(e);
       alert("Error updating dummy rating");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleUpdateDoctorExceptions = async (docId: string, exceptions: any[]) => {
+    setIsUpdating(true);
+    try {
+      const formData = new FormData();
+      formData.append("id", docId);
+      formData.append("exceptions", JSON.stringify(exceptions));
+
+      const res = await fetch(`${getApiBaseUrl()}/api/doctors`, {
+        method: "PATCH",
+        body: formData,
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAllDoctors(allDoctors.map((d: any) => d.id === docId ? data.doctor : d));
+      } else {
+        alert("Failed to update exceptions.");
+      }
+    } catch (e) {
+      console.error(e);
+      alert("Error updating exceptions");
     } finally {
       setIsUpdating(false);
     }
@@ -1735,7 +1758,7 @@ export default function AdminDashboardPage() {
                     type="button"
                     onClick={() => {
                       setEditingDoctorId(null);
-                      setNewDoctorForm({ name: "", specialty: "", description: "", experience: "", image: null, availableDays: [], availableWeeks: [], dummyRating: "", useDummyRating: false, exceptions: [] });
+                      setNewDoctorForm({ name: "", specialty: "", description: "", experience: "", image: null, availableDays: [], availableWeeks: [], dummyRating: "", useDummyRating: false });
                     }}
                     className="text-xs font-bold text-[#6b8c8c] hover:text-[#0a3f41] transition-colors underline"
                   >
@@ -1797,40 +1820,6 @@ export default function AdminDashboardPage() {
                     </div>
                     <p className="text-xs text-[#6b8c8c] mt-2 font-medium">Leave options unselected if the doctor is available any day or week.</p>
                   </div>
-                </div>
-                <div className="md:col-span-2 bg-[#f5f7f7] p-4 rounded-xl space-y-4">
-                  <label className="block text-sm font-bold text-[#0a3f41]">Availability Exceptions (Overrides)</label>
-                  <p className="text-xs text-[#6b8c8c] font-medium mb-2">Manually specify dates where the doctor's standard schedule should be overridden.</p>
-                  <div className="flex flex-wrap gap-2 items-center">
-                    <input type="date" id="exceptionDate" className="p-2 rounded-lg border border-[#e8ecec] text-[#0a3f41] focus:ring-2 focus:ring-[#5adace]/50 outline-none" min={new Date().toISOString().split("T")[0]} />
-                    <select id="exceptionStatus" className="p-2 rounded-lg border border-[#e8ecec] text-[#0a3f41] focus:ring-2 focus:ring-[#5adace]/50 outline-none">
-                      <option value="false">Not Available</option>
-                      <option value="true">Available</option>
-                    </select>
-                    <button type="button" onClick={() => {
-                      const dateInput = document.getElementById("exceptionDate") as HTMLInputElement;
-                      const statusInput = document.getElementById("exceptionStatus") as HTMLSelectElement;
-                      if (!dateInput.value) return;
-                      const newEx = { date: dateInput.value, isAvailable: statusInput.value === "true" };
-                      setNewDoctorForm(prev => {
-                        const filtered = (prev.exceptions || []).filter(e => e.date !== newEx.date);
-                        return { ...prev, exceptions: [...filtered, newEx] };
-                      });
-                      dateInput.value = "";
-                    }} className="bg-[#5adace] text-[#0a3f41] px-4 py-2 rounded-lg font-bold hover:bg-[#0a3f41] hover:text-white transition-colors">Add</button>
-                  </div>
-                  {newDoctorForm.exceptions && newDoctorForm.exceptions.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      {newDoctorForm.exceptions.map((ex, idx) => (
-                        <div key={idx} className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-sm font-medium ${ex.isAvailable ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
-                          <span>{ex.date}: {ex.isAvailable ? "Available" : "Not Available"}</span>
-                          <button type="button" onClick={() => {
-                            setNewDoctorForm(prev => ({ ...prev, exceptions: prev.exceptions.filter(e => e.date !== ex.date) }));
-                          }} className="material-symbols-outlined text-[16px] flex items-center hover:opacity-70">close</button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
                 <div className="md:col-span-2">
                   <label className="text-xs font-bold text-[#6b8c8c] uppercase tracking-widest ml-1 mb-2 block">Upload Doctor Photo</label>
@@ -1906,7 +1895,57 @@ export default function AdminDashboardPage() {
                             </div>
                           </td>
                           <td className="p-5 text-[#6b8c8c] text-sm">{doc.specialty}</td>
-                          <td className="p-5 text-[#6b8c8c] text-sm">{formatAvailability(doc)}</td>
+                          <td className="p-5 text-[#6b8c8c] text-sm align-top">
+                            <div className="mb-2">{formatAvailability(doc)}</div>
+                            <div className="bg-[#f5f7f7] p-3 rounded-xl mt-2 border border-[#e8ecec]">
+                              <p className="text-[10px] font-bold text-[#0a3f41] uppercase tracking-widest mb-2">Exceptions</p>
+                              {doc.exceptions && doc.exceptions.length > 0 ? (
+                                <div className="flex flex-col gap-1.5 mb-3">
+                                  {doc.exceptions.map((ex: any, idx: number) => (
+                                    <div key={idx} className={`flex items-center justify-between px-2 py-1 rounded-md border text-xs font-medium ${ex.isAvailable ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
+                                      <span>{ex.date}: {ex.isAvailable ? "Available" : "Not Available"}</span>
+                                      <button 
+                                        onClick={() => {
+                                          if (window.confirm('Remove this exception?')) {
+                                            handleUpdateDoctorExceptions(doc.id, doc.exceptions.filter((e: any) => e.date !== ex.date));
+                                          }
+                                        }} 
+                                        disabled={isUpdating}
+                                        className="material-symbols-outlined text-[14px] hover:opacity-70 ml-2"
+                                      >
+                                        close
+                                      </button>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-xs text-[#6b8c8c] italic mb-3">No exceptions</p>
+                              )}
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <input type="date" id={`exceptionDate-${doc.id}`} className="text-[11px] p-1.5 rounded border border-[#e8ecec] text-[#0a3f41] outline-none max-w-[110px]" min={new Date().toISOString().split("T")[0]} />
+                                <select id={`exceptionStatus-${doc.id}`} className="text-[11px] p-1.5 rounded border border-[#e8ecec] text-[#0a3f41] outline-none">
+                                  <option value="false">Off</option>
+                                  <option value="true">On</option>
+                                </select>
+                                <button 
+                                  onClick={() => {
+                                    const dateInput = document.getElementById(`exceptionDate-${doc.id}`) as HTMLInputElement;
+                                    const statusInput = document.getElementById(`exceptionStatus-${doc.id}`) as HTMLSelectElement;
+                                    if (!dateInput.value) return;
+                                    const newEx = { date: dateInput.value, isAvailable: statusInput.value === "true" };
+                                    const currentExceptions = doc.exceptions || [];
+                                    const filtered = currentExceptions.filter((e: any) => e.date !== newEx.date);
+                                    handleUpdateDoctorExceptions(doc.id, [...filtered, newEx]);
+                                    dateInput.value = "";
+                                  }} 
+                                  disabled={isUpdating}
+                                  className="bg-[#5adace] text-[#0a3f41] px-2 py-1.5 rounded font-bold text-[11px] hover:bg-[#0a3f41] hover:text-white transition-colors"
+                                >
+                                  Add
+                                </button>
+                              </div>
+                            </div>
+                          </td>
                           <td className="p-5">
                             {(() => {
                               const docReviews = reviews.filter(r => r.doctorName && r.doctorName.trim().toLowerCase() === doc.name.trim().toLowerCase());
