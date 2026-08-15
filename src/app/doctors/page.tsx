@@ -119,7 +119,7 @@ export default function DoctorsPage() {
         {/* ── Section 2: Specialized Areas ── */}
         <section className="py-20 bg-surface border-y border-outline-variant/10 overflow-hidden">
           <div className="relative flex overflow-hidden group w-full">
-            <div className="flex animate-marquee hover:pause-marquee shrink-0 gap-16 py-4">
+            <div className="flex animate-marquee shrink-0 gap-16 py-4">
               {[
                 { icon: "psychology", name: "Psychiatry" },
                 { icon: "child_care", name: "Paediatrics" },

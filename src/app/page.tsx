@@ -69,7 +69,7 @@ const GlobalReviewSlider = ({ reviews }: { reviews: any[] }) => {
           
           <div className="flex w-full transition-transform duration-1000 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
             {reviews.map((review, idx) => (
-              <div key={idx} className="w-full flex-shrink-0 flex flex-col items-center justify-center px-4 md:px-12 relative z-10">
+              <div key={idx} className="flex-none w-full flex flex-col items-center justify-center px-4 md:px-12 relative z-10 min-h-[200px]" style={{ width: '100%' }}>
                 <div className="flex gap-1 mb-6">
                   {[1,2,3,4,5].map(s => <span key={s} className="material-symbols-outlined text-[28px] text-orange-400 drop-shadow-sm">{s <= review.rating ? "star" : ""}</span>)}
                 </div>
@@ -396,7 +396,7 @@ export default function Home() {
           </div>
           
           <div className="relative flex overflow-hidden group w-full">
-            <div className="flex animate-marquee hover:pause-marquee shrink-0 gap-16 py-4">
+            <div className="flex animate-marquee shrink-0 gap-16 py-4">
               {[
                 { icon: "child_care", name: "Paediatrics" },
                 { icon: "female", name: "Gynaecology" },

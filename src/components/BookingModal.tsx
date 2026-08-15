@@ -208,7 +208,7 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
     <div className={`fixed inset-0 z-[100] flex items-center justify-center p-4 transition-all duration-300 ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
       <div className="absolute inset-0 bg-on-background/60 backdrop-blur-md" onClick={onClose}></div>
       
-      <div className={`relative bg-white dark:bg-surface-container-high w-full max-w-xl rounded-[3rem] shadow-elevation-5 overflow-hidden transition-all duration-300 ${show ? "translate-y-0 scale-100" : "translate-y-10 scale-95"}`}>
+      <div className={`relative bg-white dark:bg-surface-container-high w-full max-w-xl rounded-[3rem] shadow-elevation-5 max-h-[90vh] overflow-y-auto transition-all duration-300 ${show ? "translate-y-0 scale-100" : "translate-y-10 scale-95"}`}>
         <div className="p-8 md:p-12">
           <div className="flex justify-between items-center mb-10">
             <h2 className="font-headline-lg text-headline-lg text-primary">Patient Registration</h2>
