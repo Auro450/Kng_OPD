@@ -19,6 +19,7 @@ interface Doctor {
   bio?: string;
   dummyRating?: string;
   useDummyRating?: boolean;
+  exceptions?: { date: string; isAvailable: boolean }[];
 }
 
 const CompactReviewSlider = ({ reviews }: { reviews: any[] }) => {

@@ -28,6 +28,7 @@ interface Doctor {
   availableWeeks?: number[];
   dummyRating?: string;
   useDummyRating?: boolean;
+  exceptions?: { date: string; isAvailable: boolean }[];
 }
 
 interface Review {
