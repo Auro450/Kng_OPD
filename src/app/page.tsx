@@ -206,6 +206,16 @@ export default function Home() {
     
     if (!selectedDoc) return true;
 
+    const offsetDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+    const dateStr = offsetDate.toISOString().split("T")[0];
+
+    if (selectedDoc.exceptions && Array.isArray(selectedDoc.exceptions)) {
+        const exception = selectedDoc.exceptions.find((e: any) => e.date === dateStr);
+        if (exception) {
+            return exception.isAvailable;
+        }
+    }
+
     const { availableDays, availableWeeks } = selectedDoc;
     
     if ((!availableDays || availableDays.length === 0) && (!availableWeeks || availableWeeks.length === 0)) {
