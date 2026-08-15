@@ -1735,7 +1735,7 @@ export default function AdminDashboardPage() {
                     type="button"
                     onClick={() => {
                       setEditingDoctorId(null);
-                      setNewDoctorForm({ name: "", specialty: "", description: "", experience: "", image: null, availableDays: [], availableWeeks: [], dummyRating: "", useDummyRating: false });
+                      setNewDoctorForm({ name: "", specialty: "", description: "", experience: "", image: null, availableDays: [], availableWeeks: [], dummyRating: "", useDummyRating: false, exceptions: [] });
                     }}
                     className="text-xs font-bold text-[#6b8c8c] hover:text-[#0a3f41] transition-colors underline"
                   >
