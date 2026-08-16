@@ -1597,7 +1597,7 @@ export default function AdminDashboardPage() {
           >
             <span className="material-symbols-outlined text-xl">shopping_cart</span>
             Medicine Orders
-            <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${activeTab === "medicine-orders" ? "bg-white/20" : "bg-[#e8ecec]"}`}>{allMedicineOrders.length}</span>
+            <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${activeTab === "medicine-orders" ? "bg-white/20" : "bg-[#e8ecec]"}`}>{allMedicineOrders.filter(o => o.status !== "Deleted").length}</span>
           </button>
           <button
             onClick={() => handleTabChange("gallery-manage")}
