@@ -1725,6 +1725,8 @@ export default function AdminDashboardPage() {
                   ) : (
                     <>
                       <option value="Placed">Placed</option>
+                      <option value="Paid Online">Paid Online</option>
+                      <option value="COD">COD</option>
                       <option value="Delivered">Delivered</option>
                     </>
                   )}
@@ -2709,6 +2711,8 @@ export default function AdminDashboardPage() {
                               }`}
                             >
                               <option value="Placed" className="bg-white text-[#0a3f41] font-medium">Placed</option>
+                              <option value="Paid Online" className="bg-white text-[#0a3f41] font-medium">Paid Online</option>
+                              <option value="COD" className="bg-white text-[#0a3f41] font-medium">COD</option>
                               <option value="Delivered" className="bg-white text-[#0a3f41] font-medium">Delivered</option>
                             </select>
                           </td>
