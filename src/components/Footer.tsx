@@ -47,7 +47,7 @@ export function Footer() {
           <ul className="space-y-4">
             <li className="flex items-start gap-3">
               <span className="material-symbols-outlined text-tertiary-fixed dark:text-primary">location_on</span>
-              <span className="font-body-md text-surface-variant/90 dark:text-on-surface-variant">Anantahari Mitra Lane, College, opposite D L Roy, Nediarpara, Krishnanagar, West Bengal 741101</span>
+              <span className="font-body-md text-surface-variant/90 dark:text-on-surface-variant">14, Anantahari Mitra Road, Opposite D L College , Nediarpara, Krishnanagar, West Bengal 741101</span>
             </li>
             <li className="flex items-center gap-3">
               <span className="material-symbols-outlined text-tertiary-fixed dark:text-primary">phone_in_talk</span>
@@ -55,7 +55,7 @@ export function Footer() {
             </li>
             <li className="flex items-center gap-3">
               <span className="material-symbols-outlined text-tertiary-fixed dark:text-primary">schedule</span>
-              <span className="font-body-md text-surface-variant/90 dark:text-on-surface-variant">Mon - Sunday 8 AM - 9 PM</span>
+              <span className="font-body-md text-surface-variant/90 dark:text-on-surface-variant">Mon - Sunday 8:30 AM - 8:30 PM</span>
             </li>
           </ul>
         </div>
