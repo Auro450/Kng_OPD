@@ -2607,6 +2607,8 @@ export default function AdminDashboardPage() {
                 <tbody className="divide-y divide-[#0a3f41]/5">
                   {(() => {
                     const filtered = allMedicineOrders.filter(order => {
+                      if (order.status === "Deleted") return false;
+
                       const search = (filters["medicine-orders"]?.search || "").toLowerCase().trim();
                       const date = (filters["medicine-orders"] as any)?.date || "";
                       const status = (filters["medicine-orders"] as any)?.status || "";
