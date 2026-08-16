@@ -135,7 +135,7 @@ export function Navbar({ onOpenModal }: NavbarProps = {}) {
             </button>
           ) : (
             <button
-              onClick={openLoginModal}
+              onClick={() => openLoginModal()}
               className="hidden sm:inline-flex items-center gap-2 border border-[#5adace] text-[#5adace] px-6 py-2.5 rounded-full text-sm md:text-base hover:bg-[#5adace]/10 transition-all active:scale-95 duration-150 ease-in-out font-bold"
             >
               <span className="material-symbols-outlined text-base">login</span>
