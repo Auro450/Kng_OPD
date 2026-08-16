@@ -43,6 +43,8 @@ interface Review {
 
 const GlobalReviewSlider = ({ reviews }: { reviews: any[] }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   useEffect(() => {
     if (reviews.length <= 1) return;
@@ -50,9 +52,32 @@ const GlobalReviewSlider = ({ reviews }: { reviews: any[] }) => {
       setCurrentIndex((prev) => (prev + 1) % reviews.length);
     }, 6000);
     return () => clearInterval(interval);
-  }, [reviews]);
+  }, [reviews, currentIndex]); // Added currentIndex so manual swipes reset the timer
 
   if (reviews.length === 0) return null;
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe) {
+      setCurrentIndex((prev) => (prev + 1) % reviews.length);
+    } else if (isRightSwipe) {
+      setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
+    }
+    setTouchStart(0);
+    setTouchEnd(0);
+  };
 
   return (
     <section className="py-16 md:py-24 px-margin-mobile md:px-margin-desktop bg-[#f5f7f7] relative overflow-hidden">
@@ -63,14 +88,20 @@ const GlobalReviewSlider = ({ reviews }: { reviews: any[] }) => {
       <div className="max-w-container-max mx-auto relative z-10">
         <h2 className="font-headline-lg text-4xl md:text-5xl text-center text-[#0a3f41] font-bold mb-16">Patient Stories</h2>
 
-        <div className="max-w-5xl mx-auto backdrop-blur-xl bg-white/60 border border-white/80 rounded-[3rem] p-10 md:p-16 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] overflow-hidden relative">
+        <div className="max-w-5xl mx-auto backdrop-blur-xl bg-white/60 border border-white/80 rounded-[3rem] p-6 md:p-16 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] overflow-hidden relative">
           <div className="absolute top-6 left-6 md:top-10 md:left-10 opacity-10">
             <span className="material-symbols-outlined text-[120px] text-[#0a3f41]">format_quote</span>
           </div>
 
-          <div className="flex w-full transition-transform duration-1000 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
+          <div 
+            className="flex w-full transition-transform duration-1000 ease-in-out" 
+            style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             {reviews.map((review, idx) => (
-              <div key={idx} className="flex-none w-full flex flex-col items-center justify-center px-4 md:px-12 relative z-10 min-h-[200px]" style={{ width: '100%' }}>
+              <div key={idx} className="w-full shrink-0 flex flex-col items-center justify-center px-2 md:px-12 relative z-10 min-h-[200px] overflow-hidden">
                 <div className="flex gap-1 mb-6">
                   {[1, 2, 3, 4, 5].map(s => <span key={s} className="material-symbols-outlined text-[28px] text-orange-400 drop-shadow-sm">{s <= review.rating ? "star" : ""}</span>)}
                 </div>
@@ -78,8 +109,8 @@ const GlobalReviewSlider = ({ reviews }: { reviews: any[] }) => {
                   "{review.text}"
                 </p>
                 <div className="flex flex-col items-center">
-                  <p className="text-lg font-black text-[#5adace] uppercase tracking-widest">{review.patientName}</p>
-                  <p className="text-sm font-bold text-[#0a3f41]/50 mt-1 uppercase tracking-widest">
+                  <p className="text-lg font-black text-[#5adace] uppercase tracking-widest text-center">{review.patientName}</p>
+                  <p className="text-sm font-bold text-[#0a3f41]/50 mt-1 uppercase tracking-widest text-center">
                     {review.type === 'Pathology' ? 'PATHOLOGY SERVICE'
                       : review.type === 'Medicine' ? 'MEDICINE ORDER'
                         : review.doctorName ? `FOR ${review.doctorName}`
@@ -91,7 +122,7 @@ const GlobalReviewSlider = ({ reviews }: { reviews: any[] }) => {
           </div>
 
           {/* Dots Indicator */}
-          <div className="flex justify-center gap-3 mt-12 relative z-10">
+          <div className="flex justify-center gap-3 mt-12 relative z-10 flex-wrap">
             {reviews.map((_, idx) => (
               <button
                 key={idx}
