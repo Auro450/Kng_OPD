@@ -295,31 +295,33 @@ export default function DiagnosticCentrePage() {
             </div>
 
             <div className="bg-white dark:bg-surface-container rounded-[2.5rem] border border-outline-variant/30 overflow-hidden shadow-elevation-1">
-              <table className="w-full text-left">
-                <thead className="bg-primary text-on-primary">
-                  <tr>
-                    <th className="px-8 py-6 font-label-lg uppercase tracking-widest">Test Code</th>
-                    <th className="px-8 py-6 font-label-lg uppercase tracking-widest">Test Name</th>
-                    <th className="px-8 py-6 font-label-lg uppercase tracking-widest text-right">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-outline-variant/20">
-                  {visibleTests.map((t, i) => (
-                    <tr key={t.code} className={`hover:bg-primary/5 transition-all ${i % 2 === 1 ? 'bg-surface-container-low/30' : ''}`}>
-                      <td className="px-8 py-6 font-bold text-primary">{t.code}</td>
-                      <td className="px-8 py-6 font-body-lg">{t.name}</td>
-                      <td className="px-8 py-6 text-right">
-                        <button 
-                          onClick={() => { if(!selectedTests.includes(t.code)) toggleTest(t.code); setIsHomeCollectionOpen(true); }}
-                          className="bg-primary/10 text-primary px-6 py-3 rounded-full font-bold hover:bg-primary hover:text-on-primary transition-all"
-                        >
-                          Select Test
-                        </button>
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left min-w-[600px]">
+                  <thead className="bg-primary text-on-primary">
+                    <tr>
+                      <th className="px-8 py-6 font-label-lg uppercase tracking-widest">Test Code</th>
+                      <th className="px-8 py-6 font-label-lg uppercase tracking-widest">Test Name</th>
+                      <th className="px-8 py-6 font-label-lg uppercase tracking-widest text-right">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-outline-variant/20">
+                    {visibleTests.map((t, i) => (
+                      <tr key={t.code} className={`hover:bg-primary/5 transition-all ${i % 2 === 1 ? 'bg-surface-container-low/30' : ''}`}>
+                        <td className="px-8 py-6 font-bold text-primary">{t.code}</td>
+                        <td className="px-8 py-6 font-body-lg">{t.name}</td>
+                        <td className="px-8 py-6 text-right">
+                          <button 
+                            onClick={() => { if(!selectedTests.includes(t.code)) toggleTest(t.code); setIsHomeCollectionOpen(true); }}
+                            className="bg-primary/10 text-primary px-6 py-3 rounded-full font-bold hover:bg-primary hover:text-on-primary transition-all whitespace-nowrap"
+                          >
+                            Select Test
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
               <div className="p-10 text-center bg-surface-container/20 border-t border-outline-variant/20">
                 <button onClick={() => setShowAll(!showAll)} className="text-primary font-bold text-lg hover:underline">
                   {showAll ? "Show Fewer Tests" : `View Full Test Catalog (${allTests.length} Tests)`}
