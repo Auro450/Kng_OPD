@@ -125,13 +125,21 @@ export function Navbar({ onOpenModal }: NavbarProps = {}) {
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
           <NotificationBell />
-          {user && (
+          {user ? (
             <button
               onClick={openProfileModal}
               className="hidden sm:inline-flex items-center gap-2 border border-[#5adace] text-[#5adace] px-6 py-2.5 rounded-full text-sm md:text-base hover:bg-[#5adace]/10 transition-all active:scale-95 duration-150 ease-in-out font-bold"
             >
               <span className="material-symbols-outlined text-base">person</span>
               {user.name.split(' ')[0]}
+            </button>
+          ) : (
+            <button
+              onClick={openLoginModal}
+              className="hidden sm:inline-flex items-center gap-2 border border-[#5adace] text-[#5adace] px-6 py-2.5 rounded-full text-sm md:text-base hover:bg-[#5adace]/10 transition-all active:scale-95 duration-150 ease-in-out font-bold"
+            >
+              <span className="material-symbols-outlined text-base">login</span>
+              Login
             </button>
           )}
           <button
@@ -213,7 +221,7 @@ export function Navbar({ onOpenModal }: NavbarProps = {}) {
             Contact
           </Link>
           
-          {user && (
+          {user ? (
             <button
               onClick={() => {
                 setIsMobileMenuOpen(false);
@@ -223,6 +231,17 @@ export function Navbar({ onOpenModal }: NavbarProps = {}) {
             >
               <span className="material-symbols-outlined">person</span>
               My Profile
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                openLoginModal();
+              }}
+              className="w-full mt-2 border border-[#5adace] text-[#5adace] py-3 rounded-lg transition-colors font-body-md font-bold flex items-center justify-center gap-2"
+            >
+              <span className="material-symbols-outlined">login</span>
+              Login
             </button>
           )}
 

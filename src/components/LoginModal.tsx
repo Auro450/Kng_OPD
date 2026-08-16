@@ -45,7 +45,7 @@ export function LoginModal() {
       }
     } catch (e) {
       console.error("Failed to authenticate with backend", e);
-      alert("Login failed.");
+      alert("Login failed: " + (e instanceof Error ? e.message : JSON.stringify(e)));
     }
   };
 
@@ -94,7 +94,6 @@ export function LoginModal() {
                 <GoogleLogin
                   onSuccess={handleGoogleSuccess}
                   onError={handleGoogleError}
-                  useOneTap
                   shape="pill"
                   size="large"
                 />

@@ -85,7 +85,11 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
     }
 
     try {
-      const orderResponse = await fetch(`${"https://13-207-203-76.nip.io"}/api/create-order`, { method: "POST" });
+      const orderResponse = await fetch(`${"https://13-207-203-76.nip.io"}/api/create-order`, { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: 100 })
+      });
       const orderData = await orderResponse.json();
 
       if (!orderData.success) {
@@ -119,7 +123,12 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
           email: user?.email || "",
           contact: formData.phone
         },
-        theme: { color: "#0a3f41" }
+        theme: { color: "#0a3f41" },
+        modal: {
+          ondismiss: function () {
+            setIsSubmitting(false);
+          }
+        }
       };
 
       const rzp = new (window as any).Razorpay(options);

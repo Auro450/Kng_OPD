@@ -62,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const openLoginModal = (callback?: () => void) => {
-    if (callback) {
+    if (typeof callback === 'function') {
       setOnLoginSuccessCallback(() => callback);
     } else {
       setOnLoginSuccessCallback(null);

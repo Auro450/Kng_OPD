@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Navbar } from "@/components/Navbar";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Footer } from "@/components/Footer";
+import { BookingModal } from "@/components/BookingModal";
 import { getApiBaseUrl } from "@/utils/apiConfig";
 
 interface AppEvent {
@@ -106,6 +107,7 @@ const ImageSlider = ({ images }: { images: string[] }) => {
 export default function EventsPage() {
   const [events, setEvents] = useState<AppEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -124,8 +126,9 @@ export default function EventsPage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar onOpenModal={() => setIsBookingModalOpen(true)} />
       <AnnouncementBar />
+      <BookingModal isOpen={isBookingModalOpen} onClose={() => setIsBookingModalOpen(false)} />
       <main className="min-h-screen bg-[#f5f7f7] flex flex-col">
         <section className="bg-[#0a3f41] text-white pt-32 pb-20 px-margin-mobile md:px-margin-desktop relative overflow-hidden">
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#5adace]/10 rounded-full blur-[100px] pointer-events-none translate-x-1/3 -translate-y-1/3"></div>

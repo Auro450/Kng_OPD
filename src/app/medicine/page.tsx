@@ -7,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { Navbar } from "@/components/Navbar";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Footer } from "@/components/Footer";
+import { BookingModal } from "@/components/BookingModal";
 import { getApiBaseUrl } from "@/utils/apiConfig";
 
 interface Medicine {
@@ -27,11 +28,14 @@ interface CartItem extends Medicine {
 
 export default function MedicinePage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, openLoginModal } = useAuth();
   const [medicines, setMedicines] = useState<Medicine[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [search, setSearch] = useState("");
   const [patientDetails, setPatientDetails] = useState<{name: string, phone: string, address: string, streetNo: string, buildingNo: string, landmark: string, pincode: string, lat: number | null, lon: number | null}>({ name: "", phone: "", address: "", streetNo: "", buildingNo: "", landmark: "", pincode: "", lat: null, lon: null });
   const [couponCode, setCouponCode] = useState("");
@@ -213,12 +217,88 @@ export default function MedicinePage() {
     }
   };
 
-  const handleCheckout = async () => {
-    if (!patientDetails.name || !patientDetails.phone || !patientDetails.address) {
-      alert("Please fill in all your details for delivery.");
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handleOnlinePayment = async () => {
+    setIsSubmitting(true);
+    const res = await loadRazorpayScript();
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      setIsSubmitting(false);
       return;
     }
 
+    try {
+      const orderResponse = await fetch(`${getApiBaseUrl()}/api/create-order`, { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: finalTotal })
+      });
+      const orderData = await orderResponse.json();
+
+      if (!orderData.success) {
+        alert("Failed to create order");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const options = {
+        key: "rzp_live_TN3sscaEW0fMq4",
+        amount: orderData.order.amount,
+        currency: orderData.order.currency,
+        name: "Ray's Medical",
+        description: "Medicine Order Payment",
+        order_id: orderData.order.id,
+        handler: async function (response: any) {
+          const verifyRes = await fetch(`${getApiBaseUrl()}/api/verify-payment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(response)
+          });
+          const verifyData = await verifyRes.json();
+          if (verifyData.success) {
+            submitOrder("Online", response.razorpay_payment_id);
+          } else {
+            alert("Payment verification failed!");
+            setIsSubmitting(false);
+          }
+        },
+        prefill: {
+          name: patientDetails.name,
+          email: user?.email || "",
+          contact: patientDetails.phone
+        },
+        theme: { color: "#0a3f41" },
+        modal: {
+          ondismiss: function () {
+            setIsSubmitting(false);
+          }
+        }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on("payment.failed", function (response: any) {
+        alert("Payment failed! Reason: " + response.error.description);
+        setIsSubmitting(false);
+      });
+      rzp.open();
+    } catch (err) {
+      console.error(err);
+      alert("Error initiating payment.");
+      setIsSubmitting(false);
+    }
+  };
+
+  const submitOrder = async (paymentMethod: "Online" | "COD", razorpayPaymentId?: string) => {
+    setIsSubmitting(true);
     try {
       const orderPayload = {
         patientDetails,
@@ -229,7 +309,9 @@ export default function MedicinePage() {
         discountAmount,
         finalAmount: finalTotal,
         finalTotal,
-        couponCode: couponCode || null
+        couponCode: couponCode || null,
+        paymentMethod,
+        razorpayPaymentId
       };
 
       let body: any;
@@ -261,13 +343,30 @@ export default function MedicinePage() {
         setDiscount(0);
         setCouponMsg({ type: "", text: "" });
         localStorage.removeItem("medicine_cart");
+        setShowPaymentModal(false);
       } else {
         alert("Failed to place order. Please try again.");
       }
     } catch (error) {
       console.error(error);
       alert("Error placing order.");
+    } finally {
+      setIsSubmitting(false);
     }
+  };
+
+  const handleCheckout = () => {
+    if (!patientDetails.name || !patientDetails.phone || !patientDetails.address) {
+      alert("Please fill in all your details for delivery.");
+      return;
+    }
+    
+    if (!user) {
+      openLoginModal();
+      return;
+    }
+
+    setShowPaymentModal(true);
   };
 
 
@@ -276,8 +375,9 @@ export default function MedicinePage() {
 
   return (
     <>
-      <Navbar />
+      <Navbar onOpenModal={() => setIsBookingModalOpen(true)} />
       <AnnouncementBar />
+      <BookingModal isOpen={isBookingModalOpen} onClose={() => setIsBookingModalOpen(false)} />
       <div className="min-h-screen bg-[#f8f9f9] flex flex-col">
         <div className="bg-[#0a3f41] py-16 px-4 md:px-12 text-center">
         <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">Ray's Pharmacy</h1>
@@ -594,6 +694,74 @@ export default function MedicinePage() {
         </div>
       </div>
       )}
+
+      {/* Payment Options Modal */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isSubmitting && setShowPaymentModal(false)}></div>
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full mx-4 shadow-2xl relative z-10 animate-fade-in-up border border-white/20">
+            <button 
+              onClick={() => !isSubmitting && setShowPaymentModal(false)}
+              className="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition-colors"
+              disabled={isSubmitting}
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+            
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-[#5adace]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="material-symbols-outlined text-3xl text-[#0a3f41]">payments</span>
+              </div>
+              <h2 className="text-2xl font-bold text-[#0a3f41]">Payment Options</h2>
+              <p className="text-gray-500 mt-2 text-sm">Choose how you'd like to pay for your order of <strong className="text-[#0a3f41]">₹{finalTotal.toFixed(2)}</strong></p>
+            </div>
+
+            <div className="space-y-4">
+              <button
+                onClick={handleOnlinePayment}
+                disabled={isSubmitting}
+                className="w-full flex items-center justify-between p-4 rounded-xl border-2 border-[#e8ecec] hover:border-[#5adace] hover:bg-[#f8f9f9] transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-[#0a3f41]/5 rounded-lg flex items-center justify-center group-hover:bg-[#5adace]/20 transition-colors">
+                    <span className="material-symbols-outlined text-[#0a3f41]">credit_card</span>
+                  </div>
+                  <div className="text-left">
+                    <div className="font-bold text-[#0a3f41]">Pay Online</div>
+                    <div className="text-xs text-gray-500 mt-0.5">UPI, Cards, Wallets</div>
+                  </div>
+                </div>
+                <span className="material-symbols-outlined text-gray-300 group-hover:text-[#5adace] transition-colors">chevron_right</span>
+              </button>
+
+              <button
+                onClick={() => submitOrder("COD")}
+                disabled={isSubmitting}
+                className="w-full flex items-center justify-between p-4 rounded-xl border-2 border-[#e8ecec] hover:border-[#5adace] hover:bg-[#f8f9f9] transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-[#0a3f41]/5 rounded-lg flex items-center justify-center group-hover:bg-[#5adace]/20 transition-colors">
+                    <span className="material-symbols-outlined text-[#0a3f41]">local_shipping</span>
+                  </div>
+                  <div className="text-left">
+                    <div className="font-bold text-[#0a3f41]">Cash on Delivery</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Pay when you receive</div>
+                  </div>
+                </div>
+                <span className="material-symbols-outlined text-gray-300 group-hover:text-[#5adace] transition-colors">chevron_right</span>
+              </button>
+            </div>
+            
+            {isSubmitting && (
+              <div className="mt-6 flex items-center justify-center gap-2 text-[#5adace] font-medium">
+                <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-current"></div>
+                Processing...
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
     </>

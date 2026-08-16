@@ -95,7 +95,87 @@ export default function DiagnosticCentrePage() {
     setSelectedTests(prev => prev.includes(code) ? prev.filter(c => c !== code) : [...prev, code]);
   };
 
-  const submitCollection = async (dataToSubmit: any, selectedTestsList: string[]) => {
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
+  const handlePayment = async () => {
+    setIsSubmitting(true);
+    const res = await loadRazorpayScript();
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const orderResponse = await fetch(`${"https://13-207-203-76.nip.io"}/api/create-order`, { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: 100 })
+      });
+      const orderData = await orderResponse.json();
+
+      if (!orderData.success) {
+        alert("Failed to create order");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const options = {
+        key: "rzp_live_TN3sscaEW0fMq4",
+        amount: orderData.order.amount,
+        currency: orderData.order.currency,
+        name: "Ray's Medical",
+        description: "Home Collection Request Fee",
+        order_id: orderData.order.id,
+        handler: async function (response: any) {
+          const verifyRes = await fetch(`${"https://13-207-203-76.nip.io"}/api/verify-payment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(response)
+          });
+          const verifyData = await verifyRes.json();
+          if (verifyData.success) {
+            submitCollection(collectionForm, selectedTests, response.razorpay_payment_id);
+          } else {
+            alert("Payment verification failed!");
+            setIsSubmitting(false);
+          }
+        },
+        prefill: {
+          name: collectionForm.name || user?.name || "",
+          email: user?.email || "",
+          contact: collectionForm.phone || user?.phone || ""
+        },
+        theme: { color: "#0a3f41" },
+        modal: {
+          ondismiss: function () {
+            setIsSubmitting(false);
+          }
+        }
+      };
+
+      const rzp = new (window as any).Razorpay(options);
+      rzp.on("payment.failed", function (response: any) {
+        alert("Payment failed! Reason: " + response.error.description);
+        setIsSubmitting(false);
+      });
+      rzp.open();
+    } catch (err) {
+      console.error(err);
+      alert("Error initiating payment.");
+      setIsSubmitting(false);
+    }
+  };
+
+  const submitCollection = async (dataToSubmit: any, selectedTestsList: string[], paymentId?: string) => {
     setIsSubmitting(true);
     const submissionData = {
       ...dataToSubmit,
@@ -106,7 +186,8 @@ export default function DiagnosticCentrePage() {
       }).join(", "),
       type: "Home Collection Request",
       userEmail: user?.email,
-      userPhone: user?.phone
+      userPhone: user?.phone,
+      paymentId
     };
     
     const formData = new FormData();
@@ -140,10 +221,10 @@ export default function DiagnosticCentrePage() {
     }
     
     if (!user) {
-      openLoginModal(() => submitCollection(collectionForm, selectedTests));
+      openLoginModal(() => handlePayment());
       return;
     }
-    submitCollection(collectionForm, selectedTests);
+    handlePayment();
   };
 
   return (
