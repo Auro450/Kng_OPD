@@ -62,17 +62,17 @@ const GlobalReviewSlider = ({ reviews }: { reviews: any[] }) => {
 
       <div className="max-w-container-max mx-auto relative z-10">
         <h2 className="font-headline-lg text-4xl md:text-5xl text-center text-[#0a3f41] font-bold mb-16">Patient Stories</h2>
-        
+
         <div className="max-w-5xl mx-auto backdrop-blur-xl bg-white/60 border border-white/80 rounded-[3rem] p-10 md:p-16 shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] overflow-hidden relative">
           <div className="absolute top-6 left-6 md:top-10 md:left-10 opacity-10">
             <span className="material-symbols-outlined text-[120px] text-[#0a3f41]">format_quote</span>
           </div>
-          
+
           <div className="flex w-full transition-transform duration-1000 ease-in-out" style={{ transform: `translateX(-${currentIndex * 100}%)` }}>
             {reviews.map((review, idx) => (
               <div key={idx} className="flex-none w-full flex flex-col items-center justify-center px-4 md:px-12 relative z-10 min-h-[200px]" style={{ width: '100%' }}>
                 <div className="flex gap-1 mb-6">
-                  {[1,2,3,4,5].map(s => <span key={s} className="material-symbols-outlined text-[28px] text-orange-400 drop-shadow-sm">{s <= review.rating ? "star" : ""}</span>)}
+                  {[1, 2, 3, 4, 5].map(s => <span key={s} className="material-symbols-outlined text-[28px] text-orange-400 drop-shadow-sm">{s <= review.rating ? "star" : ""}</span>)}
                 </div>
                 <p className="text-xl md:text-3xl text-[#0a3f41] text-center leading-relaxed font-bold mb-10 italic">
                   "{review.text}"
@@ -80,10 +80,10 @@ const GlobalReviewSlider = ({ reviews }: { reviews: any[] }) => {
                 <div className="flex flex-col items-center">
                   <p className="text-lg font-black text-[#5adace] uppercase tracking-widest">{review.patientName}</p>
                   <p className="text-sm font-bold text-[#0a3f41]/50 mt-1 uppercase tracking-widest">
-                    {review.type === 'Pathology' ? 'PATHOLOGY SERVICE' 
+                    {review.type === 'Pathology' ? 'PATHOLOGY SERVICE'
                       : review.type === 'Medicine' ? 'MEDICINE ORDER'
-                      : review.doctorName ? `FOR DR. ${review.doctorName}`
-                      : 'GENERAL REVIEW'}
+                        : review.doctorName ? `FOR ${review.doctorName}`
+                          : 'GENERAL REVIEW'}
                   </p>
                 </div>
               </div>
@@ -93,8 +93,8 @@ const GlobalReviewSlider = ({ reviews }: { reviews: any[] }) => {
           {/* Dots Indicator */}
           <div className="flex justify-center gap-3 mt-12 relative z-10">
             {reviews.map((_, idx) => (
-              <button 
-                key={idx} 
+              <button
+                key={idx}
                 onClick={() => setCurrentIndex(idx)}
                 className={`h-2.5 rounded-full transition-all duration-500 ${currentIndex === idx ? 'w-10 bg-[#5adace]' : 'w-2.5 bg-[#0a3f41]/20 hover:bg-[#0a3f41]/40'}`}
                 aria-label={`Go to slide ${idx + 1}`}
@@ -151,7 +151,7 @@ export default function Home() {
         const drRes = await fetch(`${"https://13-207-203-76.nip.io"}/api/doctors`);
         const drData = await drRes.json();
         if (Array.isArray(drData) && drData.length > 0) setDoctors(drData);
-        
+
         const blogRes = await fetch(`${"https://13-207-203-76.nip.io"}/api/blog`);
         const blogData = await blogRes.json();
         if (Array.isArray(blogData) && blogData.length > 0) setBlogs([...ORIGINAL_BLOGS, ...blogData]);
@@ -159,7 +159,7 @@ export default function Home() {
         const reviewRes = await fetch(`${"https://13-207-203-76.nip.io"}/api/reviews`);
         const reviewData = await reviewRes.json();
         if (reviewData.success) setReviews(reviewData.reviews);
-      } catch (err) {}
+      } catch (err) { }
     }
     fetchData();
   }, []);
@@ -200,25 +200,25 @@ export default function Home() {
 
   const isDateAvailable = (date: Date) => {
     const selectedDoc = doctors.find(d => d.name === formData.doctor);
-    
+
     const today = new Date();
-    today.setHours(0,0,0,0);
+    today.setHours(0, 0, 0, 0);
     if (date < today) return false;
-    
+
     if (!selectedDoc) return true;
 
     const offsetDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
     const dateStr = offsetDate.toISOString().split("T")[0];
 
     if (selectedDoc.exceptions && Array.isArray(selectedDoc.exceptions)) {
-        const exception = selectedDoc.exceptions.find((e: any) => e.date === dateStr);
-        if (exception) {
-            return exception.isAvailable;
-        }
+      const exception = selectedDoc.exceptions.find((e: any) => e.date === dateStr);
+      if (exception) {
+        return exception.isAvailable;
+      }
     }
 
     const { availableDays, availableWeeks } = selectedDoc;
-    
+
     if ((!availableDays || availableDays.length === 0) && (!availableWeeks || availableWeeks.length === 0)) {
       return true;
     }
@@ -245,38 +245,38 @@ export default function Home() {
     <>
       <Navbar onOpenModal={() => setIsModalOpen(true)} />
       <AnnouncementBar />
-      
+
       <main className="bg-background text-on-surface">
         {/* ── Section 1: Hero Carousel ── */}
         <section id="hero" className="relative h-[85vh] flex items-center overflow-hidden">
           <div className="absolute inset-0 z-0">
             {BANNERS.map((src, idx) => (
-              <img 
-                key={idx} 
-                src={src} 
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${idx === currentBanner ? 'opacity-100' : 'opacity-0'}`} 
-                alt="Healthcare Banner" 
+              <img
+                key={idx}
+                src={src}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${idx === currentBanner ? 'opacity-100' : 'opacity-0'}`}
+                alt="Healthcare Banner"
               />
             ))}
             <div className="absolute inset-0 bg-on-background/60"></div>
           </div>
-          
+
           <div className="relative z-10 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop w-full flex flex-col md:flex-row items-center justify-between gap-10">
             <div className="max-w-2xl text-white">
               <h1 className="font-headline-xl text-headline-xl md:text-7xl mb-8 leading-[1.1] font-bold">
-                Exceptional Care,<br/><span className="text-[#56C5C5]">Every Single Time.</span>
+                Exceptional Care,<br /><span className="text-[#56C5C5]">Every Single Time.</span>
               </h1>
               <p className="font-body-lg text-body-lg mb-10 opacity-90 leading-relaxed">
                 Experience precision-driven medicine and empathetic care at Krishnanagar's leading medical clinic. Your health, our priority.
               </p>
               <div className="flex flex-wrap gap-4">
-                <button 
+                <button
                   onClick={handleBookAppointment}
                   className="bg-primary text-on-primary px-10 py-5 rounded-full font-label-lg text-label-lg shadow-elevation-3 hover:shadow-elevation-4 transition-all"
                 >
                   Book Appointment Now
                 </button>
-                <Link 
+                <Link
                   href="/diagnostic-centre"
                   className="bg-white/10 backdrop-blur-md text-white border border-white/20 px-10 py-5 rounded-full font-label-lg text-label-lg hover:bg-white/20 transition-all"
                 >
@@ -295,7 +295,7 @@ export default function Home() {
               <h2 className="font-headline-lg text-4xl md:text-5xl font-bold text-on-surface mb-4">Core Healthcare Services</h2>
               <p className="text-on-surface-variant font-body-lg">Comprehensive medical solutions for your entire family.</p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {[
                 { icon: "medical_services", title: "Expert Clinic", desc: "Consult with senior specialists in every medical department.", link: "/doctors" },
@@ -303,8 +303,8 @@ export default function Home() {
                 { icon: "medication", title: "Medicine Shop", desc: "Genuine medicines and healthcare products available 24/7.", link: "/medicine" },
                 { icon: "emergency", title: "Emergency Care", desc: "Rapid medical response and support when you need it most.", link: "/#contact" }
               ].map((s, i) => (
-                <Link 
-                  key={i} 
+                <Link
+                  key={i}
                   href={s.link}
                   className="block p-10 rounded-[3rem] bg-white dark:bg-surface-container border border-outline-variant/30 shadow-sm hover:shadow-elevation-5 hover:-translate-y-4 hover:bg-[#004349] hover:border-[#004349] transition-all duration-500 group cursor-pointer"
                 >
@@ -329,7 +329,7 @@ export default function Home() {
         {/* ── Section 3: Why Choose Us (Redesigned) ── */}
         <section className="py-24 bg-[#f0f4f4] relative overflow-hidden px-margin-mobile md:px-margin-desktop">
           <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#5adace]/10 rounded-full blur-[100px] pointer-events-none -translate-y-1/2 translate-x-1/3"></div>
-          
+
           <div className="max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center relative z-10">
             {/* Left: Dynamic Image Composition */}
             <div className="relative">
@@ -337,7 +337,7 @@ export default function Home() {
                 <img src="/rays_medical_real.jpg" className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000" alt="Ray's Medical Storefront" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#004349]/70 via-[#004349]/20 to-transparent"></div>
               </div>
-              
+
               {/* Floating Badge */}
               <div className="absolute -bottom-8 -right-8 md:bottom-12 md:-right-12 bg-[#004349] text-white p-8 rounded-[2rem] shadow-2xl flex items-center gap-6 border-[6px] border-[#f0f4f4] transition-transform hover:-translate-y-2">
                 <div className="w-16 h-16 bg-[#5adace]/20 text-[#5adace] rounded-2xl flex items-center justify-center shrink-0">
@@ -363,12 +363,12 @@ export default function Home() {
                 <span className="w-2 h-2 rounded-full bg-[#5adace] animate-pulse"></span>
                 Excellence in Healthcare
               </div>
-              
+
               <h2 className="font-headline-lg text-4xl md:text-5xl text-[#0a3f41] mb-12 font-black leading-tight">
-                Why Thousands Trust<br/>
+                Why Thousands Trust<br />
                 <span className="text-[#004349] relative">
                   Ray's Medical
-                  <svg className="absolute w-full h-3 -bottom-1 left-0 text-[#5adace]/40" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="4" fill="transparent"/></svg>
+                  <svg className="absolute w-full h-3 -bottom-1 left-0 text-[#5adace]/40" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="4" fill="transparent" /></svg>
                 </span>
               </h2>
 
@@ -405,7 +405,7 @@ export default function Home() {
           <div className="text-center mb-16 px-margin-mobile md:px-margin-desktop">
             <h2 className="font-headline-md text-3xl md:text-4xl text-on-surface-variant mb-4 uppercase tracking-[0.2em] font-bold">Specialized Care Areas</h2>
           </div>
-          
+
           <div className="relative flex overflow-hidden group w-full">
             <div className="flex animate-marquee shrink-0 gap-16 py-4">
               {[
@@ -447,7 +447,7 @@ export default function Home() {
           <div className="max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center relative z-10">
             <div>
               <h2 className="font-headline-lg text-4xl mb-10 text-white font-bold">Doctors</h2>
-              
+
               <div className="space-y-6 mb-12">
                 {(randomDoctors.length > 0 ? randomDoctors : doctors.slice(0, 3)).map((doc, idx) => (
                   <div key={idx} className="bg-white/5 rounded-[2rem] border border-white/10 transition-all duration-300 overflow-hidden flex flex-col">
@@ -476,7 +476,7 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-              
+
               <Link href="/doctors" className="inline-flex items-center justify-center gap-3 bg-[#5adace] text-[#0a3f41] font-bold px-8 py-4 rounded-full text-[15px] transition-all hover:bg-[#48b5ab]">
                 Meet Full Staff <span className="material-symbols-outlined text-2xl">group</span>
               </Link>
@@ -484,17 +484,17 @@ export default function Home() {
 
             <div className="bg-[#f5f7f7] rounded-[3rem] p-10 md:p-12 shadow-xl">
               <h3 className="font-headline-md text-3xl text-[#0a3f41] mb-10 font-bold text-center">Patient Registration</h3>
-              
+
               <form className="space-y-6" onSubmit={handleBookingSubmit}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2.5">
                     <label className="text-[11px] uppercase tracking-widest font-bold text-[#6b8c8c] ml-1">Full Name</label>
-                    <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" placeholder="Enter patient name" />
+                    <input required value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" placeholder="Enter patient name" />
                   </div>
                   <div className="space-y-2.5">
                     <label className="text-[11px] uppercase tracking-widest font-bold text-[#6b8c8c] ml-1">Gender</label>
                     <div className="relative">
-                      <select value={formData.gender || "Male"} onChange={e => setFormData({...formData, gender: e.target.value})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all appearance-none cursor-pointer">
+                      <select value={formData.gender || "Male"} onChange={e => setFormData({ ...formData, gender: e.target.value })} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all appearance-none cursor-pointer">
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                         <option value="Other">Other</option>
@@ -507,12 +507,12 @@ export default function Home() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2.5">
                     <label className="text-[11px] uppercase tracking-widest font-bold text-[#6b8c8c] ml-1">Phone</label>
-                    <input required type="tel" maxLength={10} pattern="[0-9]{10}" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value.replace(/\D/g, '').slice(0, 10)})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" placeholder="Contact number (10 digits)" />
+                    <input required type="tel" maxLength={10} pattern="[0-9]{10}" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all placeholder:text-[#9baea9]" placeholder="Contact number (10 digits)" />
                   </div>
                   <div className="space-y-2.5">
                     <label className="text-[11px] uppercase tracking-widest font-bold text-[#6b8c8c] ml-1">Doctor To Visit</label>
                     <div className="relative">
-                      <select value={formData.doctor} onChange={e => setFormData({...formData, doctor: e.target.value, date: ""})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all appearance-none cursor-pointer">
+                      <select value={formData.doctor} onChange={e => setFormData({ ...formData, doctor: e.target.value, date: "" })} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all appearance-none cursor-pointer">
                         <option disabled value="Select a Doctor">Choose Specialist...</option>
                         {doctors.map(doc => <option key={doc.name} value={doc.name}>{doc.name}</option>)}
                       </select>
@@ -530,9 +530,9 @@ export default function Home() {
                         onChange={(date: Date | null) => {
                           if (date) {
                             const offsetDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
-                            setFormData({...formData, date: offsetDate.toISOString().split("T")[0]});
+                            setFormData({ ...formData, date: offsetDate.toISOString().split("T")[0] });
                           } else {
-                            setFormData({...formData, date: ""});
+                            setFormData({ ...formData, date: "" });
                           }
                         }}
                         filterDate={isDateAvailable}
@@ -547,7 +547,7 @@ export default function Home() {
                   <div className="space-y-2.5">
                     <label className="text-[11px] uppercase tracking-widest font-bold text-[#6b8c8c] ml-1">Reason For Visit</label>
                     <div className="relative">
-                      <select value={formData.reason || "Select Reason"} onChange={e => setFormData({...formData, reason: e.target.value})} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all appearance-none cursor-pointer">
+                      <select value={formData.reason || "Select Reason"} onChange={e => setFormData({ ...formData, reason: e.target.value })} className="w-full px-5 py-4 rounded-2xl bg-[#e8ecec] border-none text-[#0a3f41] outline-none focus:ring-2 focus:ring-[#5adace]/50 transition-all appearance-none cursor-pointer">
                         <option value="Select Reason">Choose Reason...</option>
                         <option value="Doctors Appointment">Doctors Appointment</option>
                         <option value="Post Check-up Consultation">Post Check-up Consultation</option>
