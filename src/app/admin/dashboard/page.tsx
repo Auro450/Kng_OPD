@@ -1725,8 +1725,6 @@ export default function AdminDashboardPage() {
                   ) : (
                     <>
                       <option value="Placed">Placed</option>
-                      <option value="Paid Online">Paid Online</option>
-                      <option value="COD">COD</option>
                       <option value="Delivered">Delivered</option>
                     </>
                   )}
@@ -2601,6 +2599,7 @@ export default function AdminDashboardPage() {
                     <th className="px-6 py-4 font-semibold">Delivery Address</th>
                     <th className="px-6 py-4 font-semibold">Medicines Ordered</th>
                     <th className="px-6 py-4 font-semibold">Total Paid</th>
+                    <th className="px-6 py-4 font-semibold">Payment Status</th>
                     <th className="px-6 py-4 font-semibold">Status</th>
                     <th className="px-6 py-4 font-semibold">Medicine Bill</th>
                     <th className="px-6 py-4 font-semibold text-right">Actions</th>
@@ -2639,7 +2638,7 @@ export default function AdminDashboardPage() {
                     if (filtered.length === 0) {
                       return (
                         <tr>
-                          <td colSpan={7} className="px-8 py-12 text-center text-[#6b8c8c]">No medicine orders found.</td>
+                          <td colSpan={8} className="px-8 py-12 text-center text-[#6b8c8c]">No medicine orders found.</td>
                         </tr>
                       );
                     }
@@ -2701,6 +2700,15 @@ export default function AdminDashboardPage() {
                           </td>
                           <td className="px-6 py-4 align-top font-bold text-[#0a3f41]">₹{order.finalAmount || order.finalTotal}</td>
                           <td className="px-6 py-4 align-top">
+                            {order.paymentMethod === "Online" ? (
+                              <span className="bg-emerald-100 text-emerald-800 border border-emerald-300 px-2.5 py-1 rounded-md text-xs font-bold inline-block whitespace-nowrap shadow-2xs">Paid Online</span>
+                            ) : order.paymentMethod === "COD" ? (
+                              <span className="bg-amber-100 text-amber-800 border border-amber-300 px-2.5 py-1 rounded-md text-xs font-bold inline-block whitespace-nowrap shadow-2xs">COD</span>
+                            ) : (
+                              <span className="text-gray-400 text-xs italic">N/A</span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 align-top">
                             <select
                               value={order.status || "Placed"}
                               onChange={(e) => updateMedicineOrderStatus(order.id, e.target.value)}
@@ -2711,8 +2719,6 @@ export default function AdminDashboardPage() {
                               }`}
                             >
                               <option value="Placed" className="bg-white text-[#0a3f41] font-medium">Placed</option>
-                              <option value="Paid Online" className="bg-white text-[#0a3f41] font-medium">Paid Online</option>
-                              <option value="COD" className="bg-white text-[#0a3f41] font-medium">COD</option>
                               <option value="Delivered" className="bg-white text-[#0a3f41] font-medium">Delivered</option>
                             </select>
                           </td>
@@ -3540,7 +3546,14 @@ export default function AdminDashboardPage() {
                                                   </div>
                                                 )}
                                                 {order.finalTotal && (
-                                                  <p className="text-sm font-bold text-emerald-700 mt-2">Total: ₹{order.finalTotal}</p>
+                                                  <div className="mt-2 flex items-center justify-between">
+                                                    <p className="text-sm font-bold text-emerald-700">Total: ₹{order.finalTotal}</p>
+                                                    {order.paymentMethod && (
+                                                      <span className={`text-[10px] font-bold px-2 py-1 rounded-md border ${order.paymentMethod === 'Online' ? 'bg-emerald-100 text-emerald-700 border-emerald-200' : 'bg-amber-100 text-amber-700 border-amber-200'}`}>
+                                                        {order.paymentMethod === "Online" ? "Paid Online" : "COD"}
+                                                      </span>
+                                                    )}
+                                                  </div>
                                                 )}
                                               </div>
                                             ))}
