@@ -296,23 +296,23 @@ export default function DiagnosticCentrePage() {
 
             <div className="bg-white dark:bg-surface-container rounded-[2.5rem] border border-outline-variant/30 overflow-hidden shadow-elevation-1">
               <div className="overflow-x-auto">
-                <table className="w-full text-left min-w-[600px]">
+                <table className="w-full text-left">
                   <thead className="bg-primary text-on-primary">
                     <tr>
-                      <th className="px-8 py-6 font-label-lg uppercase tracking-widest">Test Code</th>
-                      <th className="px-8 py-6 font-label-lg uppercase tracking-widest">Test Name</th>
-                      <th className="px-8 py-6 font-label-lg uppercase tracking-widest text-right">Action</th>
+                      <th className="px-3 py-4 md:px-8 md:py-6 text-[10px] md:font-label-lg uppercase tracking-wider w-[25%] md:w-auto">Test Code</th>
+                      <th className="px-2 py-4 md:px-8 md:py-6 text-[10px] md:font-label-lg uppercase tracking-wider">Test Name</th>
+                      <th className="px-3 py-4 md:px-8 md:py-6 text-[10px] md:font-label-lg uppercase tracking-wider text-right">Action</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-outline-variant/20">
                     {visibleTests.map((t, i) => (
                       <tr key={t.code} className={`hover:bg-primary/5 transition-all ${i % 2 === 1 ? 'bg-surface-container-low/30' : ''}`}>
-                        <td className="px-8 py-6 font-bold text-primary">{t.code}</td>
-                        <td className="px-8 py-6 font-body-lg">{t.name}</td>
-                        <td className="px-8 py-6 text-right">
+                        <td className="px-3 py-4 md:px-8 md:py-6 font-bold text-primary text-xs md:text-base">{t.code}</td>
+                        <td className="px-2 py-4 md:px-8 md:py-6 text-xs md:font-body-lg leading-tight">{t.name}</td>
+                        <td className="px-3 py-4 md:px-8 md:py-6 text-right">
                           <button 
                             onClick={() => { if(!selectedTests.includes(t.code)) toggleTest(t.code); setIsHomeCollectionOpen(true); }}
-                            className="bg-primary/10 text-primary px-6 py-3 rounded-full font-bold hover:bg-primary hover:text-on-primary transition-all whitespace-nowrap"
+                            className="bg-primary/10 text-primary px-3 py-1.5 md:px-6 md:py-3 rounded-full font-bold hover:bg-primary hover:text-on-primary transition-all whitespace-nowrap text-[10px] md:text-sm"
                           >
                             Select Test
                           </button>
