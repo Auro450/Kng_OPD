@@ -2598,7 +2598,7 @@ export default function AdminDashboardPage() {
                     <th className="px-6 py-4 font-semibold">Patient Details</th>
                     <th className="px-6 py-4 font-semibold">Delivery Address</th>
                     <th className="px-6 py-4 font-semibold">Medicines Ordered</th>
-                    <th className="px-6 py-4 font-semibold">Total Paid</th>
+                    <th className="px-6 py-4 font-semibold">Total Order Value</th>
                     <th className="px-6 py-4 font-semibold">Payment Status</th>
                     <th className="px-6 py-4 font-semibold">Status</th>
                     <th className="px-6 py-4 font-semibold">Medicine Bill</th>
