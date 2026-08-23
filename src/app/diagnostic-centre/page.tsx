@@ -76,7 +76,7 @@ export default function DiagnosticCentrePage() {
   useEffect(() => {
     async function fetchTests() {
       try {
-        const res = await fetch(`${"https://13-207-203-76.nip.io"}/api/tests`);
+        const res = await fetch(`${"https://15-206-97-54.nip.io"}/api/tests`);
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) setAllTests(data);
       } catch (err) {}
@@ -115,7 +115,7 @@ export default function DiagnosticCentrePage() {
     }
 
     try {
-      const orderResponse = await fetch(`${"https://13-207-203-76.nip.io"}/api/create-order`, { 
+      const orderResponse = await fetch(`${"https://15-206-97-54.nip.io"}/api/create-order`, { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: 100 })
@@ -136,7 +136,7 @@ export default function DiagnosticCentrePage() {
         description: "Home Collection Request Fee",
         order_id: orderData.order.id,
         handler: async function (response: any) {
-          const verifyRes = await fetch(`${"https://13-207-203-76.nip.io"}/api/verify-payment`, {
+          const verifyRes = await fetch(`${"https://15-206-97-54.nip.io"}/api/verify-payment`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(response)
@@ -197,7 +197,7 @@ export default function DiagnosticCentrePage() {
     }
     
     try {
-      const res = await fetch(`${"https://13-207-203-76.nip.io"}/api/submit`, {
+      const res = await fetch(`${"https://15-206-97-54.nip.io"}/api/submit`, {
         method: "POST",
         body: formData,
       });

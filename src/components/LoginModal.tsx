@@ -32,7 +32,7 @@ export function LoginModal() {
       const decoded: any = jwtDecode(credentialResponse.credential);
 
       // Check if user already exists
-      const res = await fetch(`${"https://13-207-203-76.nip.io"}/api/users?email=${encodeURIComponent(decoded.email)}`);
+      const res = await fetch(`${"https://15-206-97-54.nip.io"}/api/users?email=${encodeURIComponent(decoded.email)}`);
       const data = await res.json();
 
       if (data.success && data.user && data.user.phone) {

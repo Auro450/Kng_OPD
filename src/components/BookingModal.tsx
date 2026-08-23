@@ -85,7 +85,7 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
     }
 
     try {
-      const orderResponse = await fetch(`${"https://13-207-203-76.nip.io"}/api/create-order`, { 
+      const orderResponse = await fetch(`${"https://15-206-97-54.nip.io"}/api/create-order`, { 
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: 100 })
@@ -106,7 +106,7 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
         description: "Booking Confirmation Fee",
         order_id: orderData.order.id,
         handler: async function (response: any) {
-          const verifyRes = await fetch(`${"https://13-207-203-76.nip.io"}/api/verify-payment`, {
+          const verifyRes = await fetch(`${"https://15-206-97-54.nip.io"}/api/verify-payment`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(response)
@@ -147,7 +147,7 @@ export function BookingModal({ isOpen, onClose, defaultDoctor }: BookingModalPro
   const submitBooking = async (dataToSubmit: any, razorpayPaymentId?: string) => {
     setIsSubmitting(true);
     try {
-      const response = await fetch(`${"https://13-207-203-76.nip.io"}/api/submit`, {
+      const response = await fetch(`${"https://15-206-97-54.nip.io"}/api/submit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...dataToSubmit, userEmail: user?.email, userPhone: user?.phone, razorpayPaymentId }),
