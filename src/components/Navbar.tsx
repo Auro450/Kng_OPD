@@ -62,11 +62,8 @@ export function Navbar({ onOpenModal }: NavbarProps = {}) {
   return (
     <nav className="bg-[#181c1e] backdrop-blur-md sticky top-0 z-50 border-b border-white/10">
       <div className="flex justify-between items-center w-full px-6 md:px-12 lg:px-16 py-4 max-w-[1920px] mx-auto gap-4">
-        <Link href="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity whitespace-nowrap flex-shrink-0">
-          <div className="bg-white/95 px-3.5 py-1.5 rounded-xl shadow-md flex items-center gap-2.5 border border-white/20">
-            <img src="/rays_logo_transparent.png" alt="Ray's Logo" className="h-7 md:h-9 w-auto object-contain" />
-            <span className="text-lg md:text-xl font-headline-md font-extrabold text-[#0a3f41] tracking-tight">Medical</span>
-          </div>
+        <Link href="/" className="text-xl md:text-2xl lg:text-3xl font-headline-md font-extrabold text-white hover:opacity-80 transition-opacity whitespace-nowrap flex-shrink-0">
+          Ray's Medical
         </Link>
         <div className="hidden lg:flex flex-1 justify-center items-center gap-3 xl:gap-6 overflow-hidden">
           <Link 
